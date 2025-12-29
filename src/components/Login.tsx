@@ -1,0 +1,30 @@
+import { useState } from 'react'
+import { supabase } from '../lib/supabaseClient'
+
+export default function Login() {
+  const [email, setEmail] = useState('')
+
+  const handleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOtp({ email })
+    if (error) alert(error.message)
+    else alert('Check your email for the login link!')
+  }
+
+  return (
+    <div className="p-4 max-w-sm mx-auto mt-20">
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        className="border p-2 w-full mb-2 rounded"
+      />
+      <button
+        onClick={handleLogin}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Login / Register
+      </button>
+    </div>
+  )
+}
