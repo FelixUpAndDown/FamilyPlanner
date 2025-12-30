@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getTodosForFamily, addTodo, toggleTodo, deleteTodo } from '../lib/todos';
 import type { Todo } from '../lib/types';
+import TodoItem from './TodoItem';
 
 interface TodoListProps {
   familyId: string;
@@ -161,48 +162,7 @@ export default function TodoList({
       {/* Todo-Liste */}
       <ul className="flex flex-col gap-3">
         {filteredTodos.map((todo) => (
-          <li key={todo.id} className="border rounded p-3 flex justify-between items-start">
-            <div className="flex flex-col flex-1 gap-1">
-              {/* Assigned To */}
-              <div className="font-bold text-lg">{todo.assigned?.name || ''}</div>
-
-              {/* Due Date */}
-              {todo.due_at && (
-                <p className="text-gray-500 text-sm">
-                  Fällig am: {new Date(todo.due_at).toLocaleDateString()}
-                </p>
-              )}
-
-              {/* Task & Checkbox */}
-              <div className="flex items-center gap-2">
-                <input type="checkbox" checked={todo.isDone} onChange={() => handleToggle(todo)} />
-                <span className={todo.isDone ? 'line-through' : ''}>{todo.task}</span>
-              </div>
-
-              {/* Comment */}
-              {todo.comment && <p className="text-gray-500 text-sm">{todo.comment}</p>}
-
-              {/* Created Info */}
-              {todo.created_at && (
-                <div className="text-xs text-gray-400 mt-1">
-                  Erstellt: {todo.creator?.name || todo.created_by_id}, am{' '}
-                  {new Date(todo.created_at).toLocaleString()}
-                </div>
-              )}
-
-              {/* Done Info */}
-              {todo.isDone && todo.done_by && todo.done_at && (
-                <div className="text-xs text-green-600 mt-1">
-                  Abgehakt: {todo.done_by.name}, {new Date(todo.done_at).toLocaleString()}
-                </div>
-              )}
-            </div>
-
-            {/* Delete Button */}
-            <button onClick={() => handleDelete(todo.id)} className="text-red-500 font-bold ml-3">
-              X
-            </button>
-          </li>
+          <TodoItem key={todo.id} todo={todo} onToggle={handleToggle} onDelete={handleDelete} />
         ))}
       </ul>
     </div>
