@@ -9,17 +9,31 @@ interface TodoItemProps {
 }
 
 export default function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
+  const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
 
   const handlers = useSwipeable({
-    onSwiping: () => setIsSwiping(true),
-    onSwipedLeft: () => {
-      setIsSwiping(false);
-      onDelete(todo.id);
+    onSwiping: (eventData) => {
+      // only consider horizontal swipes
+      if (Math.abs(eventData.deltaX) > Math.abs(eventData.deltaY)) {
+        setIsSwiping(true);
+        setSwipeOffset(Math.min(0, Math.max(-80, eventData.deltaX)));
+      }
     },
-    onSwipedRight: () => setIsSwiping(false),
-    preventScrollOnSwipe: true,
-    trackMouse: true,
+    onSwipedLeft: (eventData) => {
+      if (Math.abs(eventData.deltaX) > Math.abs(eventData.deltaY)) {
+        setSwipeOffset(0);
+        setIsSwiping(false);
+        onDelete(todo.id);
+      }
+    },
+    onSwipedRight: () => {
+      setSwipeOffset(0);
+      setIsSwiping(false);
+    },
+    preventScrollOnSwipe: false,
+    trackMouse: false,
+    delta: 10,
   });
 
   return (
@@ -35,12 +49,11 @@ export default function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
 
       {/* Todo-Inhalt */}
       <div
-        className={`relative border rounded p-3 flex justify-between items-start bg-white transition-transform duration-200 ${
-          isSwiping ? '-translate-x-6' : 'translate-x-0'
-        }`}
+        className="relative border rounded p-3 flex justify-between items-start bg-white transition-transform duration-200 ease-out"
+        style={{ transform: `translateX(${swipeOffset}px)` }}
       >
         <div className="flex flex-col flex-1 gap-1">
-          {todo.assigned && <div className="font-bold text-lg">{todo.assigned.name}</div>}
+          <div className="font-bold text-lg">{todo.assigned?.name || ''}</div>
           {todo.due_at && (
             <p
               className={`text-sm font-semibold mt-1 ${
