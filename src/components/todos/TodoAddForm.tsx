@@ -67,7 +67,7 @@ export default function TodoAddForm({
           type="date"
           value={newDueDate}
           onChange={(e) => setNewDueDate(e.target.value)}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full appearance-none sm:appearance-auto"
         />
       </div>
 
