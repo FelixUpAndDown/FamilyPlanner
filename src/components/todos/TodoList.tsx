@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { Todo } from '../../lib/types';
+import type { Todo, TodoFilterType } from '../../lib/types';
 import { getTodosForFamily, addTodo, toggleTodo, deleteTodo } from '../../lib/todos';
-import TodoItem from './TodoItem';
-import TodoAddForm from './TodoAddForm';
-import TodoFilter from './TodoFilter';
+import { TodoItem, TodoAddForm, TodoFilter } from './index';
 
 interface TodoListProps {
   familyId: string;
@@ -12,8 +10,6 @@ interface TodoListProps {
   users: { id: string; name: string }[];
 }
 
-type FilterType = 'open' | 'all' | 'done';
-
 export default function TodoList({
   familyId,
   currentUserId,
@@ -21,7 +17,7 @@ export default function TodoList({
   users,
 }: TodoListProps) {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<FilterType>('open');
+  const [filter, setFilter] = useState<TodoFilterType>('open');
   const [showAddForm, setShowAddForm] = useState(false);
 
   const fetchTodos = async () => {

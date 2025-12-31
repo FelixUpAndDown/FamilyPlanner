@@ -1,4 +1,4 @@
-import TodoList from './components/todos/TodoList';
+import { TodoList } from './components/todos';
 import Login from './components/auth/Login';
 import { useAuth } from './hooks/useAuth';
 
