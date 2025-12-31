@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
+// Props for the Login component:
+// - onLoginSuccess: callback invoked with the authenticated user after successful login
 interface LoginProps {
   onLoginSuccess: (user: any) => void;
 }
 
+// Login component: simple email/password form that uses Supabase to authenticate.
 export default function Login({ onLoginSuccess }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
