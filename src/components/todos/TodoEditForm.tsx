@@ -195,7 +195,7 @@ export default function TodoEditForm({
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Neuen Kommentar schreiben"
+              placeholder="Neuer Kommentar"
               className="border p-2 rounded flex-1"
             />
             <button

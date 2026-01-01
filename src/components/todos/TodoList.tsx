@@ -54,7 +54,6 @@ export default function TodoList({
           .order('created_at', { ascending: false });
 
         if (commentsError) {
-          console.warn('Failed to load comments meta', commentsError);
           setCommentMeta({});
         } else if (commentsData) {
           const map: Record<

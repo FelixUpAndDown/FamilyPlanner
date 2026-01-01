@@ -123,7 +123,9 @@ export default function TodoItem({
 
           {/* Comments summary: count and latest comment */}
           <div className="text-sm text-gray-500 mt-1">
-            {typeof commentCount === 'number' && <span className="mr-3">💬 {commentCount}</span>}
+            {typeof commentCount === 'number' && commentCount > 0 && (
+              <span className="mr-3">💬 {commentCount}</span>
+            )}
             {lastComment && (
               <span>
                 <strong>
