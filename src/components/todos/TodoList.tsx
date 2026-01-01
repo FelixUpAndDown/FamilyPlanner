@@ -24,11 +24,25 @@ export default function TodoList({
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<TodoFilterType>('open');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch todos for the given family and filter; sets an empty array if no data returned.
   const fetchTodos = async () => {
-    const data = await getTodosForFamily(familyId, filter);
-    setTodos(data ?? []);
+    setLoading(true);
+    setError(null);
+    try {
+      console.log('Fetching todos', { familyId, filter });
+      const data = await getTodosForFamily(familyId, filter);
+      console.log('Fetched todos', { count: data?.length ?? 0 });
+      setTodos(data ?? []);
+    } catch (err: any) {
+      console.error('Error fetching todos', err);
+      setError(err?.message || String(err));
+      setTodos([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Load todos when the familyId or the filter changes (initial load + family switch + filter changes)
@@ -120,6 +134,10 @@ export default function TodoList({
       <TodoFilter filter={filter} setFilter={setFilter} />
 
       {/* List of todos matching the selected filter */}
+      <div className="mb-2 text-sm text-gray-600">
+        {loading ? '🔄 Lade Todos…' : `${todos.length} Todos geladen — Filter: ${filter}`}
+      </div>
+      {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
       <ul className="flex flex-col gap-3">
         {filteredTodos.map((todo) => (
           <TodoItem key={todo.id} todo={todo} onToggle={handleToggle} onDelete={handleDelete} />
