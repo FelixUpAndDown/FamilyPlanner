@@ -31,10 +31,10 @@ export default function TodoList({
     setTodos(data ?? []);
   };
 
-  // Load todos when the familyId changes (initial load + family switch)
+  // Load todos when the familyId or the filter changes (initial load + family switch + filter changes)
   useEffect(() => {
     fetchTodos();
-  }, [familyId]);
+  }, [familyId, filter]);
 
   // Handler to add a new todo. Calls API then refreshes the list and hides the add form.
   const handleAdd = async (

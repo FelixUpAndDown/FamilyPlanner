@@ -21,7 +21,7 @@ export default function TodoFilter({ filter, setFilter }: TodoFilterProps) {
           onClick={() => setFilter(f)}
           className={`px-3 py-1 rounded ${filter === f ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
-          {/* Labels are currently in German */}
+          {/* Labels */}
           {f === 'open' ? 'Offene Todos' : f === 'all' ? 'Alle' : 'Erledigt'}
         </button>
       ))}
