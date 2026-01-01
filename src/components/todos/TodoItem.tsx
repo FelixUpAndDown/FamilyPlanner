@@ -16,7 +16,7 @@ interface TodoItemProps {
 // Features:
 // - horizontal swipe to reveal a red delete background and trigger delete on full swipe left
 // - checkbox to toggle completion
-// - shows assignee, due date (colored when overdue), comment, creator and done metadata
+// - shows assignee, due date (colored when overdue), description, creator and done metadata
 export default function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
   // Horizontal translation applied while swiping (in pixels)
   const [swipeOffset, setSwipeOffset] = useState(0);
@@ -83,13 +83,18 @@ export default function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
           )}
 
           {/* Checkbox toggles completion; task title is struck through when done */}
-          <div className="flex items-center gap-2">
-            <input type="checkbox" checked={todo.isDone} onChange={() => onToggle(todo)} />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={todo.isDone}
+              onChange={() => onToggle(todo)}
+              className="w-5 h-5 accent-blue-600"
+            />
             <span className={todo.isDone ? 'line-through' : ''}>{todo.task}</span>
-          </div>
+          </label>
 
-          {/* Optional comment */}
-          {todo.comment && <p className="text-gray-500 text-sm">{todo.comment}</p>}
+          {/* Optional description */}
+          {todo.description && <p className="text-gray-500 text-sm">{todo.description}</p>}
 
           {/* Creator and creation timestamp */}
           {todo.created_at && (

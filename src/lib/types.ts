@@ -14,8 +14,8 @@ export interface User {
 export interface Todo {
   id: string;
   task: string;
+  description?: string;
   isDone: boolean;
-  comment?: string;
   assigned_to_id?: string | null;
   created_by_id: string;
   done_by_id?: string | null;

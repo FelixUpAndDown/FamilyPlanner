@@ -12,7 +12,7 @@ export const getTodosForFamily = async (
       id,
       task,
       isDone,
-      comment,
+      description,
       assigned_to_id,
       created_by_id,
       done_by_id,
@@ -55,7 +55,7 @@ export const addTodo = async (
   task: string,
   assignedToId: string | null,
   createdById: string,
-  comment?: string,
+  description?: string,
   dueAt?: string | null
 ) => {
   const insertData: any = {
@@ -65,7 +65,7 @@ export const addTodo = async (
   };
 
   if (assignedToId) insertData.assigned_to_id = assignedToId;
-  if (comment) insertData.comment = comment;
+  if (description) insertData.description = description;
   if (dueAt) insertData.due_at = dueAt;
 
   const { data, error } = await supabase.from('todos').insert(insertData).select('*');

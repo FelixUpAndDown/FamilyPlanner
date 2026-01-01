@@ -4,7 +4,12 @@ interface TodoAddFormProps {
   currentProfileId: string;
   currentUserId: string;
   users: { id: string; name: string }[];
-  onAdd: (task: string, assignedTo: string | null, comment: string, dueDate: string | null) => void;
+  onAdd: (
+    task: string,
+    assignedTo: string | null,
+    description: string,
+    dueDate: string | null
+  ) => void;
   onCancel: () => void;
 }
 
@@ -20,8 +25,8 @@ export default function TodoAddForm({
   const [newTask, setNewTask] = useState('');
   // The id of the user/profile this todo is assigned to (nullable)
   const [assignedTo, setAssignedTo] = useState<string | null>(currentProfileId || currentUserId);
-  // Optional comment/details for the todo
-  const [newComment, setNewComment] = useState('');
+  // Optional description/details for the todo
+  const [newDescription, setNewDescription] = useState('');
   // Optional due date in YYYY-MM-DD format (empty string if unset)
   const [newDueDate, setNewDueDate] = useState('');
 
@@ -33,10 +38,10 @@ export default function TodoAddForm({
   // Handle creation: validate required fields, call onAdd, then reset the form.
   const handleAdd = () => {
     if (!newTask) return; // don't add empty tasks
-    onAdd(newTask, assignedTo, newComment, newDueDate || null);
+    onAdd(newTask, assignedTo, newDescription, newDueDate || null);
     // Reset form to initial state
     setNewTask('');
-    setNewComment('');
+    setNewDescription('');
     setAssignedTo(currentProfileId || currentUserId);
     setNewDueDate('');
   };
@@ -52,10 +57,10 @@ export default function TodoAddForm({
         className="border p-2 rounded"
       />
 
-      {/* Comment textarea: optional additional details for the todo */}
+      {/* description textarea: optional additional details for the todo */}
       <textarea
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
+        value={newDescription}
+        onChange={(e) => setNewDescription(e.target.value)}
         placeholder="Kommentar"
         className="border p-2 rounded"
       />

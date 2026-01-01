@@ -54,7 +54,7 @@ export default function TodoList({
   const handleAdd = async (
     task: string,
     assignedTo: string | null,
-    comment: string,
+    description: string,
     dueDate: string | null
   ) => {
     try {
@@ -63,7 +63,7 @@ export default function TodoList({
         task,
         assignedTo,
         currentProfileId || currentUserId,
-        comment,
+        description,
         dueDate
       );
       await fetchTodos();
