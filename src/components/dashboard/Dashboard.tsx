@@ -11,8 +11,9 @@
  * - Shows a compact settings menu with profile name, email, and logout action.
  */
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import { getTodosForFamily } from '../lib/todos';
+import { supabase } from '../../lib/supabaseClient';
+import { getTodosForFamily } from '../../lib/todos';
+import { getNotesForFamily } from '../../lib/notes';
 
 /**
  * Props for the Dashboard component.
@@ -30,20 +31,22 @@ interface DashboardProps {
   currentProfileId: string;
   users: { id: string; name: string }[];
   onOpenTodos: () => void;
+  onOpenNotes?: () => void;
   userEmail?: string | null;
   onLogout?: () => void;
 }
 
 export default function Dashboard({
   familyId,
-  currentUserId,
   currentProfileId,
   users,
   onOpenTodos,
+  onOpenNotes,
   userEmail,
   onLogout,
 }: DashboardProps) {
   const [openCount, setOpenCount] = useState<number | null>(null);
+  const [noteCount, setNoteCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [familyName, setFamilyName] = useState<string | null>(null);
@@ -54,16 +57,28 @@ export default function Dashboard({
     // Async fetches can resolve after the component unmounts and cause React warnings;
     // the guard prevents those updates.
     let mounted = true;
-    // Main load routine: fetch the count of open todos (used in the Todos tile)
+    // Main load routine: fetch the count of open todos and notes (used in the dashboard tiles)
     const load = async () => {
       setLoading(true);
       try {
         const todos = await getTodosForFamily(familyId, 'open');
         if (!mounted) return;
         setOpenCount(todos.length);
+
+        // Also fetch notes count for the Notes tile (best-effort)
+        try {
+          const notes = await getNotesForFamily(familyId);
+          if (!mounted) return;
+          setNoteCount(notes.length);
+        } catch (notesErr) {
+          if (!mounted) return;
+          setNoteCount(null);
+          console.error('Failed to load notes count', notesErr);
+        }
       } catch (err) {
         if (!mounted) return;
         setOpenCount(null);
+        setNoteCount(null);
         console.error('Failed to load open todos', err);
       } finally {
         if (mounted) setLoading(false);
@@ -98,9 +113,10 @@ export default function Dashboard({
       key: 'todos',
       emoji: '📝',
       label: 'Todos',
-      subtitle: loading ? 'Loading…' : openCount != null ? `${openCount} offen` : '—',
+      subtitle: loading ? 'Lädt…' : openCount != null ? `${openCount} offen` : '—',
       onClick: onOpenTodos,
     },
+
     { key: 'calendar', emoji: '📅', label: 'Calendar', subtitle: 'Coming soon', onClick: () => {} },
     {
       key: 'groceries',
@@ -109,7 +125,13 @@ export default function Dashboard({
       subtitle: 'Coming soon',
       onClick: () => {},
     },
-    { key: 'notes', emoji: '🗒️', label: 'Notes', subtitle: 'Coming soon', onClick: () => {} },
+    {
+      key: 'notes',
+      emoji: '🗒️',
+      label: 'Notizen',
+      subtitle: loading ? 'Lädt…' : noteCount != null ? `${noteCount} Notizen` : '—',
+      onClick: onOpenNotes,
+    },
   ];
 
   return (
