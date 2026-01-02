@@ -63,6 +63,15 @@ export default function RecipeEditForm({ recipe, onUpdate, onCancel }: RecipeEdi
     setIngredients(updated);
   };
 
+  const moveIngredient = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= ingredients.length) return;
+
+    const updated = [...ingredients];
+    [updated[index], updated[newIndex]] = [updated[newIndex], updated[index]];
+    setIngredients(updated);
+  };
+
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -218,6 +227,26 @@ export default function RecipeEditForm({ recipe, onUpdate, onCancel }: RecipeEdi
               <div className="space-y-3">
                 {ingredients.map((ing, index) => (
                   <div key={index} className="flex gap-2 items-start border p-3 rounded">
+                    <div className="flex flex-col gap-1">
+                      <button
+                        type="button"
+                        onClick={() => moveIngredient(index, 'up')}
+                        disabled={index === 0}
+                        className="text-gray-600 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed px-2 py-1 text-xs"
+                        title="Nach oben"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveIngredient(index, 'down')}
+                        disabled={index === ingredients.length - 1}
+                        className="text-gray-600 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed px-2 py-1 text-xs"
+                        title="Nach unten"
+                      >
+                        ▼
+                      </button>
+                    </div>
                     <div className="flex-1 space-y-2">
                       <input
                         type="text"
