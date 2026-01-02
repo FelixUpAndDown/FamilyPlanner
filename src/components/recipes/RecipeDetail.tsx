@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Recipe, RecipeIngredient } from '../../lib/types';
+import type { Recipe } from '../../lib/types';
 import { addShoppingItem, getShoppingItems, updateShoppingItemQuantity } from '../../lib/shopping';
 import { markRecipeForCooking, markRecipeAsCooked } from '../../lib/recipes';
 
