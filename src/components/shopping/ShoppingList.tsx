@@ -200,15 +200,17 @@ export default function ShoppingList({
       {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
 
       <ul className="flex flex-col gap-2">
-        {items.map((item) => (
-          <ShoppingItemComponent
-            key={item.id}
-            item={item}
-            isSelected={selectedIds.has(item.id)}
-            onToggleSelect={handleToggleSelect}
-            onDelete={handleDelete}
-          />
-        ))}
+        {items
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((item) => (
+            <ShoppingItemComponent
+              key={item.id}
+              item={item}
+              isSelected={selectedIds.has(item.id)}
+              onToggleSelect={handleToggleSelect}
+              onDelete={handleDelete}
+            />
+          ))}
       </ul>
 
       {items.length === 0 && !loading && (

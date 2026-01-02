@@ -26,6 +26,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [markedRecipeIds, setMarkedRecipeIds] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchRecipes = async () => {
     setLoading(true);
@@ -123,6 +124,21 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
     await fetchRecipes();
   };
 
+  // Filter recipes based on search query
+  const filteredRecipes = recipes.filter((recipe) => {
+    if (!searchQuery.trim()) return true;
+
+    const query = searchQuery.toLowerCase();
+
+    // Search in recipe name
+    if (recipe.name.toLowerCase().includes(query)) return true;
+
+    // Search in ingredients
+    if (recipe.ingredients?.some((ing) => ing.name.toLowerCase().includes(query))) return true;
+
+    return false;
+  });
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-4">
       <div className="flex justify-between items-center mb-6">
@@ -135,21 +151,44 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
         </button>
       </div>
 
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Suche nach Rezeptname oder Zutat..."
+          className="w-full border rounded px-4 py-2"
+        />
+      </div>
+
       <div className="mb-4 text-sm text-gray-600">
-        {loading ? '🔄 Lade Rezepte…' : `${recipes.length} Rezept(e)`}
+        {loading
+          ? '🔄 Lade Rezepte…'
+          : searchQuery
+          ? `${filteredRecipes.length} von ${recipes.length} Rezept(en)`
+          : `${recipes.length} Rezept(e)`}
       </div>
       {error && <div className="mb-4 text-red-600">Fehler: {error}</div>}
 
-      {recipes.length === 0 && !loading && (
+      {filteredRecipes.length === 0 && !loading && (
         <div className="text-center text-gray-500 py-12">
           <div className="text-6xl mb-4">🍽️</div>
-          <p>Noch keine Rezepte vorhanden.</p>
-          <p className="text-sm mt-2">Klicke auf &quot;Neues Rezept&quot; um zu starten.</p>
+          {searchQuery ? (
+            <>
+              <p>Keine Rezepte gefunden.</p>
+              <p className="text-sm mt-2">Versuche einen anderen Suchbegriff.</p>
+            </>
+          ) : (
+            <>
+              <p>Noch keine Rezepte vorhanden.</p>
+              <p className="text-sm mt-2">Klicke auf &quot;Neues Rezept&quot; um zu starten.</p>
+            </>
+          )}
         </div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {recipes.map((recipe) => (
+        {filteredRecipes.map((recipe) => (
           <RecipeItem
             key={recipe.id}
             recipe={recipe}
