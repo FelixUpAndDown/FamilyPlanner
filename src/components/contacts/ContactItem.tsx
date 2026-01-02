@@ -47,11 +47,11 @@ export default function ContactItem({
         {contact.email && <div className="text-sm text-gray-600">✉️ {contact.email}</div>}
       </div>
       <div className="flex gap-1">
-        <button onClick={onDelete} className="text-red-500 font-bold ml-3">
-          X
-        </button>
         <button onClick={onEdit} className="text-blue-500 font-bold ml-3">
           📝
+        </button>
+        <button onClick={onDelete} className="text-red-500 font-bold ml-3">
+          X
         </button>
       </div>
     </div>

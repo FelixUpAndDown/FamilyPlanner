@@ -87,7 +87,7 @@ export default function EventDetailModal({ item, onClose }: EventDetailModalProp
                 <div className="flex items-center gap-2 text-gray-700">
                   <span className="font-semibold">Status:</span>
                   <span className={todo.isDone ? 'text-green-600' : 'text-orange-600'}>
-                    {todo.isDone ? '✓ Erledigt' : '○ Offen'}
+                    {todo.isDone ? '✓ Erledigt' : 'Offen'}
                   </span>
                 </div>
               </div>

@@ -70,18 +70,18 @@ export default function NoteItem({ note, onDelete, onUpdate, users = [] }: NoteI
             {/* Top-right buttons */}
             <div className="absolute top-3 right-3 flex gap-2">
               <button
-                onClick={() => onDelete(note.id)}
-                className="p-1 rounded hover:bg-gray-100 text-red-600 font-bold"
-                title="Löschen"
-              >
-                X
-              </button>
-              <button
                 onClick={() => setOpenEdit(true)}
                 className="p-1 rounded hover:bg-gray-100 text-blue-500 font-bold"
                 title="Bearbeiten"
               >
                 📝
+              </button>
+              <button
+                onClick={() => onDelete(note.id)}
+                className="p-1 rounded hover:bg-gray-100 text-red-600 font-bold"
+                title="Löschen"
+              >
+                X
               </button>
             </div>
 
