@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { QUANTITY_UNITS } from '../../lib/constants';
 
 interface ShoppingAddFormProps {
   onAdd: (name: string, quantity: string, unit: string) => Promise<void>;
@@ -60,13 +61,11 @@ export default function ShoppingAddForm({ onAdd, onCancel }: ShoppingAddFormProp
             onChange={(e) => setUnit(e.target.value)}
             className="w-full border rounded px-3 py-2"
           >
-            <option value="Stk">Stk</option>
-            <option value="kg">kg</option>
-            <option value="g">g</option>
-            <option value="L">L</option>
-            <option value="ml">ml</option>
-            <option value="Packung">Packung</option>
-            <option value="Bund">Bund</option>
+            {QUANTITY_UNITS.map((u) => (
+              <option key={u} value={u}>
+                {u}
+              </option>
+            ))}
           </select>
         </div>
       </div>

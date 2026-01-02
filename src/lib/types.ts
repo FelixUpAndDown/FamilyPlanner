@@ -65,3 +65,33 @@ export interface ShoppingPurchaseItem {
   quantity: string;
   unit: string;
 }
+
+export interface Recipe {
+  id: string;
+  family_id: string;
+  name: string;
+  image_url?: string;
+  created_by_id: string;
+  created_at?: string;
+  ingredients?: RecipeIngredient[];
+}
+
+export interface RecipeIngredient {
+  id: string;
+  recipe_id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+  add_to_shopping: boolean;
+  order_index: number;
+}
+
+export interface RecipeCooking {
+  id: string;
+  recipe_id: string;
+  family_id: string;
+  marked_at: string;
+  marked_by_id: string;
+  cooked_at?: string | null;
+  cooked_by_id?: string | null;
+}
