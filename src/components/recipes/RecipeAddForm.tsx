@@ -14,6 +14,7 @@ interface RecipeAddFormProps {
     imageUrl: string | null,
     imageFile: File | null,
     instructions: string,
+    servings: number | null,
     ingredients: Ingredient[]
   ) => Promise<void>;
   onCancel: () => void;
@@ -25,6 +26,7 @@ export default function RecipeAddForm({ onAdd, onCancel }: RecipeAddFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [instructions, setInstructions] = useState('');
+  const [servings, setServings] = useState<number | null>(null);
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
   ]);
@@ -94,6 +96,7 @@ export default function RecipeAddForm({ onAdd, onCancel }: RecipeAddFormProps) {
         imageUrl.trim() || null,
         imageFile,
         instructions.trim(),
+        servings,
         validIngredients
       );
       setName('');
@@ -101,6 +104,7 @@ export default function RecipeAddForm({ onAdd, onCancel }: RecipeAddFormProps) {
       setImageFile(null);
       setImagePreview(null);
       setInstructions('');
+      setServings(null);
       setIngredients([{ name: '', quantity: '1', unit: 'Stk', add_to_shopping: true }]);
     } catch (err) {
       console.error(err);
@@ -199,6 +203,18 @@ export default function RecipeAddForm({ onAdd, onCancel }: RecipeAddFormProps) {
                 className="w-full border rounded px-3 py-2"
                 placeholder="Beschreibe die Zubereitungsschritte..."
                 rows={6}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Portionen</label>
+              <input
+                type="number"
+                value={servings ?? ''}
+                onChange={(e) => setServings(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="z.B. 4"
+                min="1"
               />
             </div>
 

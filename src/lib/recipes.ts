@@ -88,6 +88,7 @@ export async function addRecipe(
   name: string,
   imageUrl: string | null,
   instructions: string | null,
+  servings: number | null,
   createdById: string,
   ingredients: Array<{
     name: string;
@@ -104,6 +105,7 @@ export async function addRecipe(
       name,
       image_url: imageUrl,
       instructions: instructions,
+      servings: servings,
       created_by_id: createdById,
     })
     .select()
@@ -146,6 +148,7 @@ export async function updateRecipe(
   name: string,
   imageUrl: string | null,
   instructions: string | null,
+  servings: number | null,
   ingredients: Array<{
     name: string;
     quantity: string;
@@ -160,6 +163,7 @@ export async function updateRecipe(
       name,
       image_url: imageUrl,
       instructions: instructions,
+      servings: servings,
     })
     .eq('id', recipeId);
 

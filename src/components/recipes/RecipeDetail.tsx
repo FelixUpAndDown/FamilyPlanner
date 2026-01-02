@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import type { Recipe } from '../../lib/types';
+import type { Recipe, RecipeIngredient } from '../../lib/types';
 import { addShoppingItem, getShoppingItems, updateShoppingItemQuantity } from '../../lib/shopping';
 import { markRecipeForCooking, markRecipeAsCooked } from '../../lib/recipes';
+import ServingScaleModal from './ServingScaleModal';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -27,6 +28,7 @@ export default function RecipeDetail({
   const [selectedIngredients, setSelectedIngredients] = useState<Set<string>>(new Set());
   const [adding, setAdding] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [showServingModal, setShowServingModal] = useState(false);
 
   // Initialize selected ingredients based on add_to_shopping flag
   useEffect(() => {
@@ -66,11 +68,26 @@ export default function RecipeDetail({
       return;
     }
 
+    // Show serving scale modal if recipe has servings info
+    if (recipe.servings) {
+      setShowServingModal(true);
+      return;
+    }
+
+    // Otherwise proceed with original ingredients
+    const ingredientsToAdd =
+      recipe.ingredients?.filter((ing) => selectedIngredients.has(ing.id)) || [];
+    await addIngredientsToShopping(ingredientsToAdd);
+  };
+
+  const handleServingConfirm = async (scaledIngredients: RecipeIngredient[]) => {
+    setShowServingModal(false);
+    await addIngredientsToShopping(scaledIngredients);
+  };
+
+  const addIngredientsToShopping = async (ingredientsToAdd: RecipeIngredient[]) => {
     setAdding(true);
     try {
-      const ingredientsToAdd =
-        recipe.ingredients?.filter((ing) => selectedIngredients.has(ing.id)) || [];
-
       // Get existing shopping items
       const existingItems = await getShoppingItems(familyId);
 
@@ -249,7 +266,7 @@ export default function RecipeDetail({
               >
                 {adding
                   ? 'Wird hinzugefügt...'
-                  : `--- KOCHEN --- ${selectedIngredients.size} Zutat(en) zur Einkaufsliste hinzufügen`}
+                  : `Kochen - Portionen werden im nächsten Schritt ausgewählt.`}
               </button>
             </div>
           )}
@@ -260,6 +277,15 @@ export default function RecipeDetail({
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-[60] max-w-md text-center">
           {toast}
         </div>
+      )}
+
+      {showServingModal && recipe.ingredients && (
+        <ServingScaleModal
+          recipeServings={recipe.servings}
+          ingredients={recipe.ingredients.filter((ing) => selectedIngredients.has(ing.id))}
+          onConfirm={handleServingConfirm}
+          onCancel={() => setShowServingModal(false)}
+        />
       )}
     </>
   );

@@ -57,6 +57,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
     imageUrl: string | null,
     imageFile: File | null,
     instructions: string,
+    servings: number | null,
     ingredients: Array<{
       name: string;
       quantity: string;
@@ -77,6 +78,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
         name,
         finalImageUrl,
         instructions,
+        servings,
         currentProfileId || currentUserId,
         ingredients
       );
@@ -105,6 +107,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
     imageUrl: string | null,
     imageFile: File | null,
     instructions: string,
+    servings: number | null,
     ingredients: Array<{
       name: string;
       quantity: string;
@@ -122,7 +125,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
         finalImageUrl = await uploadRecipeImage(imageFile, familyId);
       }
 
-      await updateRecipe(editRecipe.id, name, finalImageUrl, instructions, ingredients);
+      await updateRecipe(editRecipe.id, name, finalImageUrl, instructions, servings, ingredients);
       await fetchRecipes();
       setEditRecipe(null);
       setSelectedRecipe(null);

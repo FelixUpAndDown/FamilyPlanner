@@ -17,6 +17,7 @@ interface RecipeEditFormProps {
     imageUrl: string | null,
     imageFile: File | null,
     instructions: string,
+    servings: number | null,
     ingredients: Ingredient[]
   ) => Promise<void>;
   onCancel: () => void;
@@ -34,6 +35,7 @@ export default function RecipeEditForm({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [instructions, setInstructions] = useState(recipe.instructions || '');
+  const [servings, setServings] = useState<number | null>(recipe.servings || null);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -118,6 +120,7 @@ export default function RecipeEditForm({
         imageUrl.trim() || null,
         imageFile,
         instructions.trim(),
+        servings,
         validIngredients
       );
     } catch (err) {
@@ -231,6 +234,18 @@ export default function RecipeEditForm({
                 className="w-full border rounded px-3 py-2"
                 placeholder="Beschreibe die Zubereitungsschritte..."
                 rows={6}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Portionen</label>
+              <input
+                type="number"
+                value={servings ?? ''}
+                onChange={(e) => setServings(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="z.B. 4"
+                min="1"
               />
             </div>
 
