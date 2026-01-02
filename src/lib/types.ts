@@ -137,3 +137,19 @@ export interface CalendarEvent {
   created_by_id: string;
   created_at?: string;
 }
+
+export interface AgendaItem {
+  type: 'event' | 'todo' | 'birthday';
+  title: string;
+  id: string;
+  date: Date;
+  time?: string;
+  description?: string;
+  data: CalendarEvent | Todo | Contact;
+}
+
+export interface CalendarDay {
+  date: Date;
+  isCurrentMonth: boolean;
+  events: AgendaItem[];
+}
