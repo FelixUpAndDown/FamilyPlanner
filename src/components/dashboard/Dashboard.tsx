@@ -32,6 +32,7 @@ interface DashboardProps {
   users: { id: string; name: string }[];
   onOpenTodos: () => void;
   onOpenNotes?: () => void;
+  onOpenShopping?: () => void;
   userEmail?: string | null;
   onLogout?: () => void;
 }
@@ -42,6 +43,7 @@ export default function Dashboard({
   users,
   onOpenTodos,
   onOpenNotes,
+  onOpenShopping,
   userEmail,
   onLogout,
 }: DashboardProps) {
@@ -121,9 +123,9 @@ export default function Dashboard({
     {
       key: 'groceries',
       emoji: '🛒',
-      label: 'Groceries',
-      subtitle: 'Coming soon',
-      onClick: () => {},
+      label: 'Einkaufsliste',
+      subtitle: 'Zur Liste',
+      onClick: onOpenShopping,
     },
     {
       key: 'notes',

@@ -3,12 +3,13 @@ import { TodoList } from './components/todos';
 import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
 import NoteList from './components/notes/NoteList';
+import ShoppingList from './components/shopping/ShoppingList';
 import { useAuth } from './hooks/useAuth';
 
 export default function App() {
   const { user, familyId, profileId, users, loadingProfile, handleLoginSuccess, handleLogout } =
     useAuth();
-  const [view, setView] = useState<'dashboard' | 'todos' | 'notes'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'todos' | 'notes' | 'shopping'>('dashboard');
 
   return (
     <div className="p-4 max-w-sm mx-auto">
@@ -19,7 +20,7 @@ export default function App() {
       {user && !loadingProfile && familyId && profileId && users.length > 0 && (
         <>
           <div className="mb-4">
-            {(view === 'todos' || view === 'notes') && (
+            {(view === 'todos' || view === 'notes' || view === 'shopping') && (
               <button
                 onClick={() => setView('dashboard')}
                 className="w-full flex items-center gap-3 bg-white border border-gray-200 px-4 py-2 rounded shadow-sm hover:shadow focus:outline-none"
@@ -41,6 +42,7 @@ export default function App() {
               onLogout={handleLogout}
               onOpenTodos={() => setView('todos')}
               onOpenNotes={() => setView('notes')}
+              onOpenShopping={() => setView('shopping')}
             />
           )}
 
@@ -55,6 +57,15 @@ export default function App() {
 
           {view === 'notes' && (
             <NoteList familyId={familyId} currentProfileId={profileId} users={users} />
+          )}
+
+          {view === 'shopping' && (
+            <ShoppingList
+              familyId={familyId}
+              currentUserId={user.id}
+              currentProfileId={profileId}
+              users={users}
+            />
           )}
         </>
       )}

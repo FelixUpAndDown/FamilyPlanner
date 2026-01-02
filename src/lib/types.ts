@@ -39,3 +39,29 @@ export interface Todo_Comment {
 }
 
 export type TodoFilterType = 'open' | 'done' | 'all';
+
+export interface ShoppingItem {
+  id: string;
+  family_id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+  created_by_id: string;
+  created_at?: string;
+}
+
+export interface ShoppingPurchase {
+  id: string;
+  family_id: string;
+  purchased_at: string;
+  purchased_by_id: string;
+  items: ShoppingPurchaseItem[];
+}
+
+export interface ShoppingPurchaseItem {
+  id: string;
+  purchase_id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+}
