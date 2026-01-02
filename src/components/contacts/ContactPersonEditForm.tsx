@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Contact, ContactFamily } from '../../lib/types';
 
 interface ContactPersonEditFormProps {

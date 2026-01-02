@@ -6,13 +6,14 @@ import NoteList from './components/notes/NoteList';
 import ShoppingList from './components/shopping/ShoppingList';
 import RecipeList from './components/recipes/RecipeList';
 import ContactList from './components/contacts/ContactList';
+import CalendarView from './components/calendar/CalendarView';
 import { useAuth } from './hooks/useAuth';
 
 export default function App() {
   const { user, familyId, profileId, users, loadingProfile, handleLoginSuccess, handleLogout } =
     useAuth();
   const [view, setView] = useState<
-    'dashboard' | 'todos' | 'notes' | 'shopping' | 'recipes' | 'contacts'
+    'dashboard' | 'todos' | 'notes' | 'shopping' | 'recipes' | 'contacts' | 'calendar'
   >('dashboard');
 
   return (
@@ -28,7 +29,8 @@ export default function App() {
               view === 'notes' ||
               view === 'shopping' ||
               view === 'recipes' ||
-              view === 'contacts') && (
+              view === 'contacts' ||
+              view === 'calendar') && (
               <button
                 onClick={() => setView('dashboard')}
                 className="w-full flex items-center gap-3 bg-white border border-gray-200 px-4 py-2 rounded shadow-sm hover:shadow focus:outline-none"
@@ -53,6 +55,7 @@ export default function App() {
               onOpenShopping={() => setView('shopping')}
               onOpenRecipes={() => setView('recipes')}
               onOpenContacts={() => setView('contacts')}
+              onOpenCalendar={() => setView('calendar')}
             />
           )}
 
@@ -83,6 +86,8 @@ export default function App() {
           )}
 
           {view === 'contacts' && <ContactList familyId={familyId} />}
+
+          {view === 'calendar' && <CalendarView />}
         </>
       )}
     </div>

@@ -17,11 +17,7 @@ interface ContactPersonFormProps {
   onCancel: () => void;
 }
 
-export default function ContactPersonForm({
-  contactFamilyId,
-  onAdd,
-  onCancel,
-}: ContactPersonFormProps) {
+export default function ContactPersonForm({ onAdd, onCancel }: ContactPersonFormProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthdate, setBirthdate] = useState('');

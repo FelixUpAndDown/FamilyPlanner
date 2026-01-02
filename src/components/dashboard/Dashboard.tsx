@@ -35,6 +35,7 @@ interface DashboardProps {
   onOpenShopping?: () => void;
   onOpenRecipes?: () => void;
   onOpenContacts?: () => void;
+  onOpenCalendar?: () => void;
   userEmail?: string | null;
   onLogout?: () => void;
 }
@@ -48,6 +49,7 @@ export default function Dashboard({
   onOpenShopping,
   onOpenRecipes,
   onOpenContacts,
+  onOpenCalendar,
   userEmail,
   onLogout,
 }: DashboardProps) {
@@ -123,19 +125,25 @@ export default function Dashboard({
       onClick: onOpenTodos,
     },
 
-    { key: 'calendar', emoji: '📅', label: 'Calendar', subtitle: 'Coming soon', onClick: () => {} },
+    {
+      key: 'calendar',
+      emoji: '📅',
+      label: 'Kalender',
+      subtitle: '',
+      onClick: onOpenCalendar,
+    },
     {
       key: 'groceries',
       emoji: '🛒',
       label: 'Einkaufsliste',
-      subtitle: 'Zur Liste',
+      subtitle: '',
       onClick: onOpenShopping,
     },
     {
       key: 'recipes',
       emoji: '🍳',
       label: 'Rezepte',
-      subtitle: 'Zur Übersicht',
+      subtitle: '',
       onClick: onOpenRecipes,
     },
     {
@@ -149,7 +157,7 @@ export default function Dashboard({
       key: 'contacts',
       emoji: '👥',
       label: 'Kontakte',
-      subtitle: 'Adressbuch',
+      subtitle: '',
       onClick: onOpenContacts,
     },
   ];

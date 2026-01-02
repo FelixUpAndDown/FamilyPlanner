@@ -126,3 +126,14 @@ export interface Contact {
   country?: string;
   created_at?: string;
 }
+
+export interface CalendarEvent {
+  id: string;
+  family_id: string;
+  title: string;
+  description?: string;
+  event_date: string;
+  event_time?: string;
+  created_by_id: string;
+  created_at?: string;
+}
