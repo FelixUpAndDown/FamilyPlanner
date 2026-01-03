@@ -17,18 +17,21 @@ export default function RecipeItem({ recipe, onClick, isMarkedForCooking }: Reci
           Zu kochen
         </div>
       )}
-      <div className="h-40 bg-gray-200 flex items-center justify-center overflow-hidden">
+
+      <div className="p-3 pb-2">
+        <h3 className="font-semibold text-left line-clamp-2 text-sm">{recipe.name}</h3>
+      </div>
+
+      <div className="w-full aspect-square bg-gray-200 flex items-center justify-center overflow-hidden">
         {recipe.image_url ? (
           <img src={recipe.image_url} alt={recipe.name} className="w-full h-full object-cover" />
         ) : (
-          <span className="text-6xl">🍽️</span>
+          <span className="text-7xl">👨‍🍳</span>
         )}
       </div>
-      <div className="p-3">
-        <h3 className="font-semibold text-left line-clamp-2">{recipe.name}</h3>
-        <p className="text-sm text-gray-500 text-left mt-1">
-          {recipe.ingredients?.length || 0} Zutaten
-        </p>
+
+      <div className="p-3 pt-2">
+        <p className="text-xs text-gray-500 text-left">{recipe.ingredients?.length || 0} Zutaten</p>
       </div>
     </button>
   );

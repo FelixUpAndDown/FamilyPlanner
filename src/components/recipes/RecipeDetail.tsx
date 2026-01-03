@@ -111,14 +111,15 @@ export default function RecipeDetail({
           const combinedQty = existingQty + newQty;
 
           // Update the existing item
-          await updateShoppingItemQuantity(existingItem.id, combinedQty.toString());
+          await updateShoppingItemQuantity(existingItem.id, combinedQty.toFixed(2));
           updatedCount++;
         } else {
           // Add new item
+          const quantity = parseFloat(ing.quantity) || 0;
           await addShoppingItem(
             familyId,
             ing.name,
-            ing.quantity,
+            quantity.toFixed(2),
             ing.unit,
             currentProfileId || currentUserId
           );

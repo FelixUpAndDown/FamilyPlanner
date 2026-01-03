@@ -168,6 +168,18 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
     return false;
   });
 
+  // Sort recipes: marked for cooking first, then by name
+  const sortedRecipes = [...filteredRecipes].sort((a, b) => {
+    const aMarked = markedRecipeIds.has(a.id) ? 0 : 1;
+    const bMarked = markedRecipeIds.has(b.id) ? 0 : 1;
+
+    if (aMarked !== bMarked) {
+      return aMarked - bMarked;
+    }
+
+    return a.name.localeCompare(b.name, 'de');
+  });
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-4">
       <div className="flex justify-between items-center mb-6">
@@ -216,8 +228,8 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredRecipes.map((recipe) => (
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        {sortedRecipes.map((recipe) => (
           <RecipeItem
             key={recipe.id}
             recipe={recipe}
