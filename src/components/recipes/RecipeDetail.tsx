@@ -136,7 +136,7 @@ export default function RecipeDetail({
       if (onAddToShopping) {
         onAddToShopping(message);
       }
-      
+
       // Sofort schließen und aktualisieren
       onClose();
       onUpdate();
@@ -150,11 +150,11 @@ export default function RecipeDetail({
   const handleMarkAsCooked = async () => {
     try {
       await markRecipeAsCooked(recipe.id, familyId, currentProfileId || currentUserId);
-      
+
       if (onAddToShopping) {
         onAddToShopping(`"${recipe.name}" wurde als gekocht markiert!`);
       }
-      
+
       onClose();
       onUpdate();
     } catch (err: any) {

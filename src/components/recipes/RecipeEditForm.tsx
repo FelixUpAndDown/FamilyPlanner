@@ -91,14 +91,7 @@ export default function RecipeEditForm({
 
     setSubmitting(true);
     try {
-      await onUpdate(
-        name.trim(),
-        null,
-        null,
-        instructions.trim(),
-        servings,
-        validIngredients
-      );
+      await onUpdate(name.trim(), null, null, instructions.trim(), servings, validIngredients);
     } catch (err) {
       // Silent fail on recipe update
     } finally {

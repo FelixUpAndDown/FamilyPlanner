@@ -67,14 +67,7 @@ export default function RecipeAddForm({ onAdd, onCancel }: RecipeAddFormProps) {
 
     setSubmitting(true);
     try {
-      await onAdd(
-        name.trim(),
-        null,
-        null,
-        instructions.trim(),
-        servings,
-        validIngredients
-      );
+      await onAdd(name.trim(), null, null, instructions.trim(), servings, validIngredients);
       setName('');
       setInstructions('');
       setServings(null);

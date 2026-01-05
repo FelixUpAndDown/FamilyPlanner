@@ -142,13 +142,13 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
     try {
       const recipe = recipes.find((r) => r.id === recipeId);
       await markRecipeAsCooked(recipeId, familyId, currentProfileId || currentUserId);
-      
+
       // Show toast
       if (recipe) {
         setToast(`"${recipe.name}" als gekocht markiert \u2713`);
         setTimeout(() => setToast(null), 3000);
       }
-      
+
       // Refresh recipes in background
       fetchRecipes();
     } catch (err: any) {

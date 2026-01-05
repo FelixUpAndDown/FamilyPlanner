@@ -33,12 +33,15 @@ export default function RecipeItem({
   };
 
   return (
-    <div className={`relative flex flex-col bg-white border rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow min-h-[140px] ${
-      isMarkedForCooking ? 'border-orange-500 border-2' : ''
-    }`}>
-
+    <div
+      className={`relative flex flex-col bg-white border rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow min-h-[140px] ${
+        isMarkedForCooking ? 'border-orange-500 border-2' : ''
+      }`}
+    >
       <button onClick={onClick} className="flex-1 flex flex-col p-3 text-left">
-        <h3 className="font-semibold text-sm leading-tight mb-2 line-clamp-5 break-words hyphens-auto">{recipe.name}</h3>
+        <h3 className="font-semibold text-sm leading-tight mb-2 line-clamp-5 break-words hyphens-auto">
+          {recipe.name}
+        </h3>
         <p className="text-xs text-gray-500 mt-auto">{recipe.ingredients?.length || 0} Zutaten</p>
       </button>
 
