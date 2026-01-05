@@ -65,8 +65,7 @@ serve(async (req) => {
         .from('shopping_items')
         .select('*')
         .eq('family_id', familyId)
-        .eq('deal_date', dateStr)
-        .eq('purchased', false);
+        .eq('deal_date', dateStr);
 
       // Fetch contacts with birthdays
       const { data: contacts } = await supabase
@@ -110,7 +109,7 @@ serve(async (req) => {
       events?.forEach((e: any) => (body += `📅 ${e.title}\n`));
       todos?.forEach((t: any) => (body += `✅ ${t.task}\n`));
       birthdaysToday.forEach((b: any) => (body += `🎂 ${b.first_name} ${b.last_name}\n`));
-      shoppingItems?.forEach((s: any) => (body += `🛒 ${s.item_name}\n`));
+      shoppingItems?.forEach((s: any) => (body += `🛒 ${s.name}\n`));
 
       // Send notification to all subscriptions for this family
       for (const sub of familySubs) {
