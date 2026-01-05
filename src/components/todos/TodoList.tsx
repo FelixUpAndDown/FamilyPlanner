@@ -29,6 +29,7 @@ export default function TodoList({
   const [error, setError] = useState<string | null>(null);
   const [editTodo, setEditTodo] = useState<Todo | null>(null);
   const [minimalMode, setMinimalMode] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const [commentMeta, setCommentMeta] = useState<
     Record<
       string,
@@ -115,6 +116,18 @@ export default function TodoList({
   const handleToggle = async (todo: Todo) => {
     try {
       const doneById = !todo.isDone ? currentProfileId || currentUserId : null;
+
+      // Show toast message immediately
+      if (!todo.isDone) {
+        setToast(`"${todo.task}" erledigt ✓`);
+      } else {
+        setToast(`"${todo.task}" wieder geöffnet`);
+      }
+
+      // Auto-hide toast after 3 seconds
+      setTimeout(() => setToast(null), 3000);
+
+      // Update DB and refresh - but don't block UI
       await toggleTodo(todo.id, !todo.isDone, doneById);
       await fetchTodos();
     } catch (err: any) {
@@ -249,6 +262,13 @@ export default function TodoList({
           currentUserId={currentUserId}
           currentProfileId={currentProfileId}
         />
+      )}
+
+      {/* Toast notification */}
+      {toast && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+          {toast}
+        </div>
       )}
     </div>
   );
