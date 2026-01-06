@@ -113,8 +113,14 @@ export default function RecipeEditForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-2 z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full my-4">
+    <div
+      className="fixed inset-0 bg-black/20 z-50 flex items-end sm:items-center justify-center overflow-y-auto"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-white w-full sm:max-w-2xl sm:rounded-lg shadow-lg my-0 sm:my-4 rounded-t-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <form onSubmit={handleSubmit}>
           <div className="p-3 border-b flex justify-between items-center">
             <h3 className="text-lg font-bold">Rezept bearbeiten</h3>
@@ -283,8 +289,14 @@ export default function RecipeEditForm({
       </div>
 
       {showDeleteDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-4">
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50"
+          onClick={() => setShowDeleteDialog(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-lg max-w-sm w-full p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-base font-bold mb-3">Rezept löschen?</h3>
             <p className="text-sm text-gray-700 mb-4">
               Möchtest du das Rezept "{recipe.name}" wirklich löschen? Diese Aktion kann nicht

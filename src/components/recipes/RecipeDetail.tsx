@@ -169,8 +169,14 @@ export default function RecipeDetail({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-2 z-50">
-        <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div
+        className="fixed inset-0 bg-black/20 z-50 flex items-end sm:items-center justify-center"
+        onClick={onClose}
+      >
+        <div
+          className="bg-white w-full sm:max-w-2xl sm:rounded-lg shadow-lg max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col rounded-t-2xl sm:m-4"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="p-3 border-b flex justify-between items-center">
             <h3 className="text-lg font-bold truncate pr-2">{recipe.name}</h3>
             <div className="flex gap-1 items-center flex-shrink-0">
