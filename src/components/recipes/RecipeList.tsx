@@ -114,6 +114,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
   const handleEdit = () => {
     if (selectedRecipe) {
       setEditRecipe(selectedRecipe);
+      setSelectedRecipe(null); // Close detail view when opening edit
     }
   };
 
@@ -137,11 +138,12 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
           <RecipeEditForm
             recipe={editRecipe}
             onUpdate={handleUpdateRecipe}
-            onCancel={() => setEditRecipe(null)}
+            onCancel={() => {
+              setEditRecipe(null);
+            }}
             onDelete={async () => {
               await handleDelete(editRecipe.id);
               setEditRecipe(null);
-              setSelectedRecipe(null);
             }}
           />
         ) : showAddForm ? (

@@ -5,7 +5,6 @@ import type { AgendaItem } from '../../lib/types';
 import CalendarEventForm from './CalendarEventForm.js';
 import CalendarGrid from './CalendarGrid';
 import AgendaView from './AgendaView';
-import EventDetailModal from './EventDetailModal';
 import WeekView from './WeekView';
 import DayDetail from './DayDetail';
 import ViewModeSelector from './ViewModeSelector';
@@ -30,7 +29,6 @@ export default function CalendarView() {
 
   const [viewMode, setViewMode] = useState<'upcoming' | 'calendar' | 'week'>('upcoming');
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedItem, setSelectedItem] = useState<AgendaItem | null>(null);
   const [selectedDayAgenda, setSelectedDayAgenda] = useState<AgendaItem[] | null>(null);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [weekStart, setWeekStart] = useState(() => getWeekStart());
@@ -147,12 +145,9 @@ export default function CalendarView() {
           <AgendaView
             items={agendaItems}
             onEditEvent={openForEdit}
-            onSelectItem={setSelectedItem}
           />
         )}
 
-        {/* Modals */}
-        <EventDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
         {toast && <Toast message={toast} />}
       </div>
     </PullToRefresh>
