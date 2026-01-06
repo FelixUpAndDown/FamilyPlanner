@@ -1,4 +1,5 @@
 import type { Todo, Contact, AgendaItem } from '../../lib/types';
+import { formatTime } from './calendarUtils';
 
 interface EventDetailModalProps {
   item: AgendaItem | null;
@@ -83,7 +84,16 @@ export default function EventDetailModal({ item, onClose }: EventDetailModalProp
                 {todo.due_at && (
                   <div className="flex items-center gap-2 text-gray-700">
                     <span className="font-semibold">⏰ Fällig:</span>
-                    <span>{new Date(todo.due_at).toLocaleString('de-DE')}</span>
+                    <span>
+                      {new Date(todo.due_at).toLocaleDateString('de-DE')}{' '}
+                      {formatTime(
+                        new Date(todo.due_at).toLocaleTimeString('de-DE', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                        })
+                      )}
+                    </span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-gray-700">

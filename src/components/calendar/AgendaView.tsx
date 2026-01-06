@@ -1,5 +1,5 @@
 import type { CalendarEvent, Todo, Contact, AgendaItem } from '../../lib/types';
-import { getEventIcon, getEventColorClasses } from './calendarUtils';
+import { getEventIcon, getEventColorClasses, formatTime } from './calendarUtils';
 
 interface AgendaViewProps {
   items: AgendaItem[];
@@ -99,7 +99,9 @@ export default function AgendaView({ items, onEditEvent, onSelectItem }: AgendaV
                           <div className="text-sm text-gray-600 mt-1">🎈 {ageText}</div>
                         )}
                         {item.time && (
-                          <div className="text-sm text-gray-600 mt-1">🕐 {item.time}</div>
+                          <div className="text-sm text-gray-600 mt-1">
+                            🕐 {formatTime(item.time)}
+                          </div>
                         )}
                         {item.description && (
                           <div className="text-sm text-gray-600 mt-1">{item.description}</div>

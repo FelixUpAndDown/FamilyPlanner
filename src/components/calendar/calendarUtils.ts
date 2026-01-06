@@ -7,6 +7,27 @@ import type {
   CalendarDay,
 } from '../../lib/types';
 
+// Format time from HH:MM:SS to HH:MM
+export function formatTime(time: string | null | undefined): string {
+  if (!time) return '';
+  // If time is in HH:MM:SS format, extract only HH:MM
+  if (time.includes(':')) {
+    const parts = time.split(':');
+    return `${parts[0]}:${parts[1]}`;
+  }
+  return time;
+}
+
+// Get the next full hour from current time
+export function getNextFullHour(): string {
+  const now = new Date();
+  const nextHour = new Date(now);
+  nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+  const hours = String(nextHour.getHours()).padStart(2, '0');
+  const minutes = '00';
+  return `${hours}:${minutes}`;
+}
+
 // Get the appropriate icon/emoji for an agenda item type
 export function getEventIcon(type: string, data?: any): string {
   switch (type) {

@@ -17,6 +17,7 @@ import {
   getEventIcon,
   getEventBorderClasses,
   getEventColorClasses,
+  formatTime,
 } from './calendarUtils';
 export default function CalendarView() {
   const { familyId: userFamilyId } = useAuth();
@@ -394,7 +395,7 @@ export default function CalendarView() {
                       } ${getEventColorClasses(item.type)}`}
                     >
                       {getEventIcon(item.type, item.data)} {item.title}
-                      {item.time ? ` · ${item.time}` : ''}
+                      {item.time ? ` · ${formatTime(item.time)}` : ''}
                     </span>
                   ))}
                   {items.length > 4 && (
@@ -449,7 +450,9 @@ export default function CalendarView() {
                   {item.description && (
                     <div className="text-xs text-gray-600 mt-1">{item.description}</div>
                   )}
-                  {item.time && <div className="text-xs text-gray-500 mt-1">🕐 {item.time}</div>}
+                  {item.time && (
+                    <div className="text-xs text-gray-500 mt-1">🕐 {formatTime(item.time)}</div>
+                  )}
                 </li>
               ))}
             </ul>

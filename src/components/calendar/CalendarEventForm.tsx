@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { addCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../../lib/calendar';
+import { formatTime, getNextFullHour } from './calendarUtils';
 import type { CalendarEvent } from '../../lib/types';
 
 interface CalendarEventFormProps {
@@ -30,7 +31,7 @@ export default function CalendarEventForm({
       setTitle(event.title);
       setDescription(event.description || '');
       setEventDate(event.event_date);
-      setEventTime(event.event_time || '');
+      setEventTime(formatTime(event.event_time) || '');
     } else if (initialDate) {
       // Normalize the date to local timezone (midnight)
       const normalizedDate = new Date(
@@ -111,6 +112,12 @@ export default function CalendarEventForm({
               type="time"
               value={eventTime}
               onChange={(e) => setEventTime(e.target.value)}
+              onFocus={(e) => {
+                if (!e.target.value) {
+                  setEventTime(getNextFullHour());
+                }
+              }}
+              step="3600"
               className="w-full border border-gray-300 rounded p-2"
             />
           </div>
