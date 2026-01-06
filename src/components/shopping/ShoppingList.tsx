@@ -9,6 +9,8 @@ import {
   getPurchaseHistory,
   updateShoppingItemQuantity,
 } from '../../lib/shopping';
+import { useToast } from '../../hooks/useToast';
+import Toast from '../shared/Toast';
 import ShoppingItemComponent from './ShoppingItem';
 import ShoppingAddForm from './ShoppingAddForm';
 import ShoppingHistory from './ShoppingHistory';
@@ -35,7 +37,7 @@ export default function ShoppingList({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [purchases, setPurchases] = useState<ShoppingPurchase[]>([]);
-  const [toast, setToast] = useState<string | null>(null);
+  const { toast, showToast } = useToast();
 
   const fetchItems = async () => {
     setLoading(true);
@@ -90,10 +92,9 @@ export default function ShoppingList({
         setShowAddForm(false);
 
         // Show toast message
-        setToast(
+        showToast(
           `Menge von "${name}" wurde von ${existingItem.quantity} auf ${combinedQty} ${unit} erhöht`
         );
-        setTimeout(() => setToast(null), 4000);
       } else {
         // Add new item
         await addShoppingItem(
@@ -160,6 +161,7 @@ export default function ShoppingList({
       setSelectedIds(new Set());
       await fetchItems();
       await fetchHistory();
+      showToast(`${selectedItems.length} Artikel eingekauft ✓`);
     } catch (err: any) {
       alert(err.message || JSON.stringify(err));
     }
@@ -320,11 +322,7 @@ export default function ShoppingList({
         />
       )}
 
-      {toast && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 max-w-md text-center">
-          {toast}
-        </div>
-      )}
+      {toast && <Toast message={toast} />}
     </div>
   );
 }

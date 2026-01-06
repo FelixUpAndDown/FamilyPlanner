@@ -9,6 +9,8 @@ import {
   uploadRecipeImage,
   markRecipeAsCooked,
 } from '../../lib/recipes';
+import { useToast } from '../../hooks/useToast';
+import Toast from '../shared/Toast';
 import RecipeItem from './RecipeItem';
 import RecipeAddForm from './RecipeAddForm';
 import RecipeDetail from './RecipeDetail';
@@ -29,7 +31,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
   const [error, setError] = useState<string | null>(null);
   const [markedRecipeIds, setMarkedRecipeIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
-  const [toast, setToast] = useState<string | null>(null);
+  const { toast, showToast } = useToast();
 
   const fetchRecipes = async () => {
     setLoading(true);
@@ -86,6 +88,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
       );
       await fetchRecipes();
       setShowAddForm(false);
+      showToast('Rezept gespeichert ✓');
     } catch (err: any) {
       alert(err.message || JSON.stringify(err));
     }
@@ -289,11 +292,7 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
         />
       )}
 
-      {toast && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-[9999] animate-fade-in">
-          {toast}
-        </div>
-      )}
+      {toast && <Toast message={toast} />}
     </div>
   );
 }

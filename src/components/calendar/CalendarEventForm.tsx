@@ -9,6 +9,7 @@ interface CalendarEventFormProps {
   initialDate?: Date | null;
   onSubmit: () => void;
   onCancel: () => void;
+  onSuccess?: (message: string) => void;
 }
 
 export default function CalendarEventForm({
@@ -16,6 +17,7 @@ export default function CalendarEventForm({
   initialDate,
   onSubmit,
   onCancel,
+  onSuccess,
 }: CalendarEventFormProps) {
   const { user, familyId: userFamilyId } = useAuth();
   const familyId = userFamilyId || '';
@@ -53,8 +55,10 @@ export default function CalendarEventForm({
     try {
       if (event) {
         await updateCalendarEvent(event.id, title, eventDate, eventTime, description);
+        onSuccess?.('Termin aktualisiert ✓');
       } else {
         await addCalendarEvent(familyId, title, eventDate, eventTime, description, userId);
+        onSuccess?.('Termin hinzugefügt ✓');
       }
       onSubmit();
     } catch (err: any) {

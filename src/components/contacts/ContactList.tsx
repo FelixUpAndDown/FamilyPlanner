@@ -10,6 +10,8 @@ import {
   deleteContactFamily,
   deleteContact,
 } from '../../lib/contacts';
+import { useToast } from '../../hooks/useToast';
+import Toast from '../shared/Toast';
 import ContactFamilyForm from './ContactFamilyForm';
 import ContactPersonForm from './ContactPersonForm';
 import ContactPersonEditForm from './ContactPersonEditForm';
@@ -32,6 +34,7 @@ export default function ContactList({ familyId }: ContactListProps) {
   const [selectedFamilyId, setSelectedFamilyId] = useState<string | null>(null);
   const [familySearchQuery, setFamilySearchQuery] = useState('');
   const [personSearchQuery, setPersonSearchQuery] = useState('');
+  const { toast, showToast } = useToast();
 
   const fetchData = async () => {
     setLoading(true);
@@ -66,6 +69,7 @@ export default function ContactList({ familyId }: ContactListProps) {
       await addContactFamily(familyId, familyName, street, houseNumber, zip, city, country);
       await fetchData();
       setShowFamilyForm(false);
+      showToast('Familie hinzugefügt ✓');
     } catch (err: any) {
       alert(err.message || JSON.stringify(err));
     }
@@ -129,6 +133,7 @@ export default function ContactList({ familyId }: ContactListProps) {
       await fetchData();
       setShowPersonForm(false);
       setSelectedFamilyId(null);
+      showToast('Person hinzugefügt ✓');
     } catch (err: any) {
       alert(err.message || JSON.stringify(err));
     }
@@ -450,6 +455,8 @@ export default function ContactList({ familyId }: ContactListProps) {
           onCancel={() => setEditContact(null)}
         />
       )}
+
+      {toast && <Toast message={toast} />}
     </div>
   );
 }

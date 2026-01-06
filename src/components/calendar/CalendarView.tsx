@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 import {
   getCalendarEvents,
   getTodosForCalendar,
@@ -11,6 +12,7 @@ import CalendarEventForm from './CalendarEventForm.js';
 import CalendarGrid from './CalendarGrid';
 import AgendaView from './AgendaView';
 import EventDetailModal from './EventDetailModal';
+import Toast from '../shared/Toast';
 import {
   createAgendaItems,
   createCalendarDays,
@@ -22,6 +24,7 @@ import {
 export default function CalendarView() {
   const { familyId: userFamilyId } = useAuth();
   const familyId = userFamilyId || '';
+  const { toast, showToast } = useToast();
 
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -264,6 +267,7 @@ export default function CalendarView() {
             setEditEvent(null);
             setSelectedDate(null);
           }}
+          onSuccess={showToast}
         />
       )}
 
@@ -451,6 +455,7 @@ export default function CalendarView() {
       )}
 
       <EventDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      {toast && <Toast message={toast} />}
     </div>
   );
 }

@@ -3,6 +3,8 @@ import type { Todo, TodoFilterType } from '../../lib/types';
 import { getTodosForFamily, addTodo, toggleTodo, deleteTodo } from '../../lib/todos';
 import { TodoItem, TodoAddForm, TodoFilter, TodoEditForm } from './index';
 import { supabase } from '../../lib/supabaseClient';
+import { useToast } from '../../hooks/useToast';
+import Toast from '../shared/Toast';
 
 // Props for the TodoList component:
 // - familyId: id of the family to load todos for
@@ -29,7 +31,7 @@ export default function TodoList({
   const [error, setError] = useState<string | null>(null);
   const [editTodo, setEditTodo] = useState<Todo | null>(null);
   const [minimalMode, setMinimalMode] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const { toast, showToast } = useToast();
   const [commentMeta, setCommentMeta] = useState<
     Record<
       string,
@@ -107,6 +109,7 @@ export default function TodoList({
       );
       await fetchTodos();
       setShowAddForm(false);
+      showToast('Aufgabe hinzugefügt ✓');
     } catch (err: any) {
       alert(err.message || JSON.stringify(err));
     }
@@ -119,13 +122,10 @@ export default function TodoList({
 
       // Show toast message immediately
       if (!todo.isDone) {
-        setToast(`"${todo.task}" erledigt ✓`);
+        showToast(`"${todo.task}" erledigt ✓`);
       } else {
-        setToast(`"${todo.task}" wieder geöffnet`);
+        showToast(`"${todo.task}" wieder geöffnet`);
       }
-
-      // Auto-hide toast after 3 seconds
-      setTimeout(() => setToast(null), 3000);
 
       // Update DB and refresh - but don't block UI
       await toggleTodo(todo.id, !todo.isDone, doneById);
@@ -265,11 +265,7 @@ export default function TodoList({
       )}
 
       {/* Toast notification */}
-      {toast && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
-          {toast}
-        </div>
-      )}
+      {toast && <Toast message={toast} />}
     </div>
   );
 }
