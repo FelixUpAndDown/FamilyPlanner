@@ -150,5 +150,6 @@ export function useContacts(familyId: string) {
     handleAddPerson,
     handleUpdatePerson,
     handleDeletePerson,
+    refetch: fetchData,
   };
 }

@@ -1,6 +1,7 @@
 import DashboardHeader from './DashboardHeader';
 import DashboardTiles, { type DashboardTile } from './DashboardTiles';
 import { useDashboardData } from './useDashboardData';
+import { PullToRefresh } from '../shared/PullToRefresh';
 
 interface DashboardProps {
   familyId: string;
@@ -30,7 +31,7 @@ export default function Dashboard({
   userEmail,
   onLogout,
 }: DashboardProps) {
-  const { openCount, noteCount, todayEventsCount, loading, familyName } =
+  const { openCount, noteCount, todayEventsCount, loading, familyName, refetch } =
     useDashboardData(familyId);
   const profileName = users.find((u) => u.id === currentProfileId)?.name ?? null;
 
@@ -80,16 +81,18 @@ export default function Dashboard({
   ];
 
   return (
-    <div className="p-2 relative">
-      <DashboardHeader
-        familyName={familyName}
-        profileName={profileName}
-        userEmail={userEmail}
-        currentProfileId={currentProfileId}
-        familyId={familyId}
-        onLogout={onLogout}
-      />
-      <DashboardTiles tiles={tiles} />
-    </div>
+    <PullToRefresh onRefresh={refetch}>
+      <div className="p-2 relative">
+        <DashboardHeader
+          familyName={familyName}
+          profileName={profileName}
+          userEmail={userEmail}
+          currentProfileId={currentProfileId}
+          familyId={familyId}
+          onLogout={onLogout}
+        />
+        <DashboardTiles tiles={tiles} />
+      </div>
+    </PullToRefresh>
   );
 }

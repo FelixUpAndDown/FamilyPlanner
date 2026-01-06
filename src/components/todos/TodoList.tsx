@@ -3,6 +3,7 @@ import type { Todo, TodoFilterType } from '../../lib/types';
 import { TodoItem, TodoAddForm, TodoFilter, TodoEditForm } from './index';
 import { useToast } from '../../hooks/useToast';
 import Toast from '../shared/Toast';
+import { PullToRefresh } from '../shared/PullToRefresh';
 import { useTodos } from './useTodos';
 import MinimalTodoView from './MinimalTodoView';
 
@@ -39,90 +40,94 @@ export default function TodoList({
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow-md">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Todo Liste</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setMinimalMode(!minimalMode)}
-            className={`px-3 py-1 rounded font-medium text-sm ${
-              minimalMode ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-            title={minimalMode ? 'Detailansicht' : 'Minimalansicht'}
-          >
-            👁️
-          </button>
-          {!showAddForm && (
+    <PullToRefresh onRefresh={fetchTodos}>
+      <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow-md">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Todo Liste</h2>
+          <div className="flex gap-2">
             <button
-              onClick={() => setShowAddForm(true)}
-              className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-lg font-bold"
+              onClick={() => setMinimalMode(!minimalMode)}
+              className={`px-3 py-1 rounded font-medium text-sm ${
+                minimalMode
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+              title={minimalMode ? 'Detailansicht' : 'Minimalansicht'}
             >
-              +
+              👁️
             </button>
-          )}
-        </div>
-      </div>
-
-      {/* Add Form */}
-      {showAddForm && (
-        <TodoAddForm
-          currentProfileId={currentProfileId}
-          currentUserId={currentUserId}
-          users={users}
-          onAdd={onAdd}
-          onCancel={() => setShowAddForm(false)}
-        />
-      )}
-
-      {/* Views */}
-      {minimalMode ? (
-        <MinimalTodoView
-          todos={todos}
-          loading={loading}
-          onToggle={handleToggle}
-          onEdit={setEditTodo}
-        />
-      ) : (
-        <>
-          <TodoFilter filter={filter} setFilter={setFilter} />
-          <div className="mb-2 text-sm text-gray-600">
-            {loading ? '🔄 Lade Todos…' : `${todos.length} Todos geladen`}
+            {!showAddForm && (
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-lg font-bold"
+              >
+                +
+              </button>
+            )}
           </div>
-          {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
-          <ul className="flex flex-col gap-3">
-            {todos.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-                users={users}
-                onEdit={() => setEditTodo(todo)}
-                currentUserId={currentUserId}
-                currentProfileId={currentProfileId}
-                onRefresh={fetchTodos}
-                commentCount={commentMeta[todo.id]?.count ?? 0}
-                comments={commentMeta[todo.id]?.comments ?? []}
-              />
-            ))}
-          </ul>
-        </>
-      )}
+        </div>
 
-      {/* Edit Modal */}
-      {editTodo && (
-        <TodoEditForm
-          todo={editTodo}
-          users={users}
-          onClose={() => setEditTodo(null)}
-          onUpdate={fetchTodos}
-          currentUserId={currentUserId}
-          currentProfileId={currentProfileId}
-        />
-      )}
+        {/* Add Form */}
+        {showAddForm && (
+          <TodoAddForm
+            currentProfileId={currentProfileId}
+            currentUserId={currentUserId}
+            users={users}
+            onAdd={onAdd}
+            onCancel={() => setShowAddForm(false)}
+          />
+        )}
 
-      {toast && <Toast message={toast} />}
-    </div>
+        {/* Views */}
+        {minimalMode ? (
+          <MinimalTodoView
+            todos={todos}
+            loading={loading}
+            onToggle={handleToggle}
+            onEdit={setEditTodo}
+          />
+        ) : (
+          <>
+            <TodoFilter filter={filter} setFilter={setFilter} />
+            <div className="mb-2 text-sm text-gray-600">
+              {loading ? '🔄 Lade Todos…' : `${todos.length} Todos geladen`}
+            </div>
+            {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
+            <ul className="flex flex-col gap-3">
+              {todos.map((todo) => (
+                <TodoItem
+                  key={todo.id}
+                  todo={todo}
+                  onToggle={handleToggle}
+                  onDelete={handleDelete}
+                  users={users}
+                  onEdit={() => setEditTodo(todo)}
+                  currentUserId={currentUserId}
+                  currentProfileId={currentProfileId}
+                  onRefresh={fetchTodos}
+                  commentCount={commentMeta[todo.id]?.count ?? 0}
+                  comments={commentMeta[todo.id]?.comments ?? []}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+
+        {/* Edit Modal */}
+        {editTodo && (
+          <TodoEditForm
+            todo={editTodo}
+            users={users}
+            onClose={() => setEditTodo(null)}
+            onUpdate={fetchTodos}
+            currentUserId={currentUserId}
+            currentProfileId={currentProfileId}
+          />
+        )}
+
+        {toast && <Toast message={toast} />}
+      </div>
+    </PullToRefresh>
   );
 }

@@ -6,6 +6,7 @@ import { useShoppingItems } from './useShoppingItems';
 import { useShoppingSelection } from './useShoppingSelection';
 import { sortShoppingItems } from './shoppingUtils';
 import Toast from '../shared/Toast';
+import { PullToRefresh } from '../shared/PullToRefresh';
 import ShoppingItemComponent from './ShoppingItem';
 import ShoppingAddForm from './ShoppingAddForm';
 import ShoppingHistory from './ShoppingHistory';
@@ -128,100 +129,109 @@ export default function ShoppingList({
   const allSelected = items.length > 0 && selectedIds.size === items.length;
   const sortedItems = sortShoppingItems(items);
 
+  const handleRefresh = async () => {
+    await fetchItems();
+    await fetchHistory();
+  };
+
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Einkaufsliste</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowQuickAdd(true)}
-            className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
-            title="Schnellanlage"
-          >
-            ⚡
-          </button>
-          <button
-            onClick={() => setShowHistory(true)}
-            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-            title="Historie anzeigen"
-          >
-            📜
-          </button>
-          {!showAddForm && (
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Einkaufsliste</h2>
+          <div className="flex gap-2">
             <button
-              onClick={() => setShowAddForm(true)}
-              className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-lg font-bold"
+              onClick={() => setShowQuickAdd(true)}
+              className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+              title="Schnellanlage"
             >
-              +
+              ⚡
+            </button>
+            <button
+              onClick={() => setShowHistory(true)}
+              className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+              title="Historie anzeigen"
+            >
+              📜
+            </button>
+            {!showAddForm && (
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-lg font-bold"
+              >
+                +
+              </button>
+            )}
+          </div>
+        </div>
+
+        {showAddForm && (
+          <ShoppingAddForm onAdd={handleAdd} onCancel={() => setShowAddForm(false)} />
+        )}
+
+        <div className="mb-4 flex flex-col gap-2">
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleToggleAll(items.map((item) => item.id))}
+              className="px-3 py-2 border rounded hover:bg-gray-100 text-sm"
+            >
+              {allSelected ? 'Alle abwählen' : 'Alle auswählen'}
+            </button>
+            <button
+              onClick={handlePurchase}
+              disabled={selectedIds.size === 0}
+              className="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Markierte eingekauft ({selectedIds.size})
+            </button>
+          </div>
+          {selectedIds.size > 0 && (
+            <button
+              onClick={handleDeleteSelectedItems}
+              className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            >
+              Markierte löschen ({selectedIds.size})
             </button>
           )}
         </div>
-      </div>
 
-      {showAddForm && <ShoppingAddForm onAdd={handleAdd} onCancel={() => setShowAddForm(false)} />}
-
-      <div className="mb-4 flex flex-col gap-2">
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleToggleAll(items.map((item) => item.id))}
-            className="px-3 py-2 border rounded hover:bg-gray-100 text-sm"
-          >
-            {allSelected ? 'Alle abwählen' : 'Alle auswählen'}
-          </button>
-          <button
-            onClick={handlePurchase}
-            disabled={selectedIds.size === 0}
-            className="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Markierte eingekauft ({selectedIds.size})
-          </button>
+        <div className="mb-2 text-sm text-gray-600">
+          {loading ? '🔄 Lade Artikel…' : `${items.length} Artikel`}
         </div>
-        {selectedIds.size > 0 && (
-          <button
-            onClick={handleDeleteSelectedItems}
-            className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
-            Markierte löschen ({selectedIds.size})
-          </button>
-        )}
-      </div>
+        {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
 
-      <div className="mb-2 text-sm text-gray-600">
-        {loading ? '🔄 Lade Artikel…' : `${items.length} Artikel`}
-      </div>
-      {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
+        <ul className="flex flex-col gap-2">
+          {sortedItems.map((item) => (
+            <ShoppingItemComponent
+              key={item.id}
+              item={item}
+              isSelected={selectedIds.has(item.id)}
+              onToggleSelect={handleToggleSelect}
+              onDelete={handleDeleteItem}
+            />
+          ))}
+        </ul>
 
-      <ul className="flex flex-col gap-2">
-        {sortedItems.map((item) => (
-          <ShoppingItemComponent
-            key={item.id}
-            item={item}
-            isSelected={selectedIds.has(item.id)}
-            onToggleSelect={handleToggleSelect}
-            onDelete={handleDeleteItem}
+        {showQuickAdd && (
+          <ShoppingQuickAdd
+            familyId={familyId}
+            currentProfileId={currentProfileId}
+            currentItems={items}
+            onClose={() => setShowQuickAdd(false)}
+            onItemsAdded={fetchItems}
           />
-        ))}
-      </ul>
+        )}
 
-      {showQuickAdd && (
-        <ShoppingQuickAdd
-          familyId={familyId}
-          currentProfileId={currentProfileId}
-          currentItems={items}
-          onClose={() => setShowQuickAdd(false)}
-          onItemsAdded={fetchItems}
-        />
-      )}
+        {showHistory && (
+          <ShoppingHistory
+            purchases={purchases}
+            users={users}
+            onClose={() => setShowHistory(false)}
+          />
+        )}
 
-      {showHistory && (
-        <ShoppingHistory
-          purchases={purchases}
-          users={users}
-          onClose={() => setShowHistory(false)}
-        />
-      )}
-
-      {toast && <Toast message={toast} />}
-    </div>
+        {toast && <Toast message={toast} />}
+      </div>
+    </PullToRefresh>
   );
 }

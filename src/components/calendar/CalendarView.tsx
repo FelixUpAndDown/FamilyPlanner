@@ -10,6 +10,7 @@ import WeekView from './WeekView';
 import DayDetail from './DayDetail';
 import ViewModeSelector from './ViewModeSelector';
 import Toast from '../shared/Toast';
+import { PullToRefresh } from '../shared/PullToRefresh';
 import { useCalendarData } from './useCalendarData';
 import { useEventForm } from './useEventForm';
 import {
@@ -64,7 +65,8 @@ export default function CalendarView() {
   );
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <PullToRefresh onRefresh={fetchData}>
+      <div className="p-4 max-w-2xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Kalender</h1>
@@ -149,5 +151,6 @@ export default function CalendarView() {
       <EventDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
       {toast && <Toast message={toast} />}
     </div>
+    </PullToRefresh>
   );
 }

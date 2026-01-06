@@ -56,5 +56,5 @@ export function useNotes(familyId: string, currentProfileId: string) {
     }
   };
 
-  return { notes, loading, error, handleAdd, handleDelete, handleUpdate };
+  return { notes, loading, error, handleAdd, handleDelete, handleUpdate, refetch: fetchNotes };
 }

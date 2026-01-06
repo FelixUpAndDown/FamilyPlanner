@@ -4,6 +4,7 @@ import { useToast } from '../../hooks/useToast';
 import { useContacts } from './useContacts';
 import { useContactSearch } from './useContactSearch';
 import Toast from '../shared/Toast';
+import { PullToRefresh } from '../shared/PullToRefresh';
 import ContactFamilyForm from './ContactFamilyForm';
 import PersonForm from './PersonForm';
 import ContactItem from './ContactItem';
@@ -26,6 +27,7 @@ export default function ContactList({ familyId }: ContactListProps) {
     handleAddPerson,
     handleUpdatePerson,
     handleDeletePerson,
+    refetch,
   } = useContacts(familyId);
 
   const {
@@ -207,268 +209,279 @@ export default function ContactList({ familyId }: ContactListProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Kontakte</h2>
-      </div>
-
-      {/* View Mode Tabs */}
-      <div className="mb-4 flex gap-2">
-        <button
-          onClick={() => setViewMode('persons')}
-          className={`px-4 py-2 rounded font-medium ${
-            viewMode === 'persons'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
-        >
-          👤 Personen
-        </button>
-        <button
-          onClick={() => setViewMode('families')}
-          className={`px-4 py-2 rounded font-medium ${
-            viewMode === 'families'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
-        >
-          👨‍👩‍👧 Familien
-        </button>
-      </div>
-
-      {loading && <div className="text-gray-500">🔄 Lade Kontakte…</div>}
-      {error && <div className="text-red-600">Fehler: {error}</div>}
-
-      {!loading && contactFamilies.length === 0 && allContacts.length === 0 && (
-        <div className="text-center text-gray-500 py-12">
-          Noch keine Kontakte vorhanden. Füge eine Familie oder Einzelperson hinzu.
+    <PullToRefresh onRefresh={refetch}>
+      <div className="max-w-4xl mx-auto mt-10 p-4">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Kontakte</h2>
         </div>
-      )}
 
-      {/* Contact Families */}
-      {viewMode === 'families' && contactFamilies.length > 0 && (
-        <div className="mb-6">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-gray-700 font-medium">
-              {filteredFamilies.length} {filteredFamilies.length === 1 ? 'Familie' : 'Familien'}
-            </span>
-            <button
-              onClick={() => setShowFamilyForm(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium flex items-center gap-2"
-            >
-              <span>+</span>
-              <span>Familie</span>
-            </button>
+        {/* View Mode Tabs */}
+        <div className="mb-4 flex gap-2">
+          <button
+            onClick={() => setViewMode('persons')}
+            className={`px-4 py-2 rounded font-medium ${
+              viewMode === 'persons'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            👤 Personen
+          </button>
+          <button
+            onClick={() => setViewMode('families')}
+            className={`px-4 py-2 rounded font-medium ${
+              viewMode === 'families'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            👨‍👩‍👧 Familien
+          </button>
+        </div>
+
+        {loading && <div className="text-gray-500">🔄 Lade Kontakte…</div>}
+        {error && <div className="text-red-600">Fehler: {error}</div>}
+
+        {!loading && contactFamilies.length === 0 && allContacts.length === 0 && (
+          <div className="text-center text-gray-500 py-12">
+            Noch keine Kontakte vorhanden. Füge eine Familie oder Einzelperson hinzu.
           </div>
-          <div className="mb-4">
-            <input
-              type="text"
-              value={familySearchQuery}
-              onChange={(e) => setFamilySearchQuery(e.target.value)}
-              placeholder="Suche nach Familienname..."
-              className="w-full border rounded px-4 py-2"
-            />
-          </div>
+        )}
 
-          {filteredFamilies.length === 0 && familySearchQuery && (
-            <div className="text-gray-500 text-sm mb-4">Keine Familien gefunden</div>
-          )}
+        {/* Contact Families */}
+        {viewMode === 'families' && contactFamilies.length > 0 && (
+          <div className="mb-6">
+            <div className="mb-4 flex items-center justify-between">
+              <span className="text-gray-700 font-medium">
+                {filteredFamilies.length} {filteredFamilies.length === 1 ? 'Familie' : 'Familien'}
+              </span>
+              <button
+                onClick={() => setShowFamilyForm(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium flex items-center gap-2"
+              >
+                <span>+</span>
+                <span>Familie</span>
+              </button>
+            </div>
+            <div className="mb-4">
+              <input
+                type="text"
+                value={familySearchQuery}
+                onChange={(e) => setFamilySearchQuery(e.target.value)}
+                placeholder="Suche nach Familienname..."
+                className="w-full border rounded px-4 py-2"
+              />
+            </div>
 
-          <div className="space-y-3">
-            {filteredFamilies.map((family) => {
-              const isExpanded = expandedFamilyIds.has(family.id);
-              const hasAddress =
-                family.street || family.house_number || family.zip || family.city || family.country;
+            {filteredFamilies.length === 0 && familySearchQuery && (
+              <div className="text-gray-500 text-sm mb-4">Keine Familien gefunden</div>
+            )}
 
-              return (
-                <div key={family.id} className="border rounded-lg overflow-hidden">
-                  <div
-                    className="p-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-gray-100"
-                    onClick={() => toggleExpanded(family.id, setExpandedFamilyIds)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">👨‍👩‍👧</span>
-                      <div>
-                        <div className="font-semibold text-lg">{family.family_name}</div>
+            <div className="space-y-3">
+              {filteredFamilies.map((family) => {
+                const isExpanded = expandedFamilyIds.has(family.id);
+                const hasAddress =
+                  family.street ||
+                  family.house_number ||
+                  family.zip ||
+                  family.city ||
+                  family.country;
+
+                return (
+                  <div key={family.id} className="border rounded-lg overflow-hidden">
+                    <div
+                      className="p-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-gray-100"
+                      onClick={() => toggleExpanded(family.id, setExpandedFamilyIds)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">👨‍👩‍👧</span>
+                        <div>
+                          <div className="font-semibold text-lg">{family.family_name}</div>
+                          {hasAddress && (
+                            <div className="text-sm text-gray-600">
+                              {family.street} {family.house_number}
+                              {family.zip || family.city ? ', ' : ''}
+                              {family.zip} {family.city}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {isExpanded && (
+                      <div className="p-4 bg-white">
+                        <ActionButtons
+                          onEdit={() => setEditFamily(family)}
+                          onDelete={() => onDeleteFamily(family.id, family.family_name)}
+                          onAddPerson={() => openPersonForm(family.id)}
+                        />
+
                         {hasAddress && (
-                          <div className="text-sm text-gray-600">
-                            {family.street} {family.house_number}
-                            {family.zip || family.city ? ', ' : ''}
-                            {family.zip} {family.city}
+                          <div className="mb-4 p-3 bg-gray-50 rounded border text-sm">
+                            <div className="font-medium mb-1">Anschrift:</div>
+                            <div>
+                              {family.street} {family.house_number}
+                            </div>
+                            <div>
+                              {family.zip} {family.city}
+                            </div>
+                            {family.country && <div>{family.country}</div>}
+                          </div>
+                        )}
+
+                        <div className="font-medium mb-2">
+                          Personen ({family.contacts?.length || 0}):
+                        </div>
+
+                        {!family.contacts || family.contacts.length === 0 ? (
+                          <div className="text-gray-500 text-sm italic">
+                            Keine Personen in dieser Familie
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {family.contacts.map((contact) => (
+                              <ContactItem
+                                key={contact.id}
+                                contact={contact}
+                                contactFamilies={contactFamilies}
+                                onEdit={() => setEditContact(contact)}
+                                onDelete={() =>
+                                  onDeletePerson(
+                                    contact.id,
+                                    `${contact.last_name}, ${contact.first_name}`
+                                  )
+                                }
+                              />
+                            ))}
                           </div>
                         )}
                       </div>
-                    </div>
+                    )}
                   </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-                  {isExpanded && (
-                    <div className="p-4 bg-white">
-                      <ActionButtons
-                        onEdit={() => setEditFamily(family)}
-                        onDelete={() => onDeleteFamily(family.id, family.family_name)}
-                        onAddPerson={() => openPersonForm(family.id)}
-                      />
+        {/* Individual Contacts */}
+        {viewMode === 'persons' && allContacts.length > 0 && (
+          <div>
+            <div className="mb-4 flex items-center justify-between">
+              <span className="text-gray-700 font-medium">
+                {filteredPersons.length} {filteredPersons.length === 1 ? 'Person' : 'Personen'}
+              </span>
+              <button
+                onClick={() => openPersonForm()}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium flex items-center gap-2"
+              >
+                <span>+</span>
+                <span>Person</span>
+              </button>
+            </div>
+            <div className="mb-4">
+              <input
+                type="text"
+                value={personSearchQuery}
+                onChange={(e) => setPersonSearchQuery(e.target.value)}
+                placeholder="Suche nach Name, E-Mail oder Telefon..."
+                className="w-full border rounded px-4 py-2"
+              />
+            </div>
 
-                      {hasAddress && (
-                        <div className="mb-4 p-3 bg-gray-50 rounded border text-sm">
-                          <div className="font-medium mb-1">Anschrift:</div>
-                          <div>
-                            {family.street} {family.house_number}
+            {filteredPersons.length === 0 && personSearchQuery && (
+              <div className="text-gray-500 text-sm mb-4">Keine Personen gefunden</div>
+            )}
+
+            <div className="space-y-3">
+              {filteredPersons.map((contact) => {
+                const isExpanded = expandedPersonIds.has(contact.id);
+                const family = contactFamilies.find((f) => f.id === contact.contact_family_id);
+                const familyName = family?.family_name;
+
+                return (
+                  <div key={contact.id} className="border rounded-lg overflow-hidden">
+                    <div
+                      className="p-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-gray-100"
+                      onClick={() => toggleExpanded(contact.id, setExpandedPersonIds)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">👤</span>
+                        <div>
+                          <div className="font-semibold text-lg">
+                            {contact.last_name}, {contact.first_name}
                           </div>
-                          <div>
-                            {family.zip} {family.city}
-                          </div>
-                          {family.country && <div>{family.country}</div>}
+                          {familyName && (
+                            <div className="text-sm text-gray-600">👨‍👩‍👧 {familyName}</div>
+                          )}
                         </div>
-                      )}
-
-                      <div className="font-medium mb-2">
-                        Personen ({family.contacts?.length || 0}):
-                      </div>
-
-                      {!family.contacts || family.contacts.length === 0 ? (
-                        <div className="text-gray-500 text-sm italic">
-                          Keine Personen in dieser Familie
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          {family.contacts.map((contact) => (
-                            <ContactItem
-                              key={contact.id}
-                              contact={contact}
-                              contactFamilies={contactFamilies}
-                              onEdit={() => setEditContact(contact)}
-                              onDelete={() =>
-                                onDeletePerson(
-                                  contact.id,
-                                  `${contact.last_name}, ${contact.first_name}`
-                                )
-                              }
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Individual Contacts */}
-      {viewMode === 'persons' && allContacts.length > 0 && (
-        <div>
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-gray-700 font-medium">
-              {filteredPersons.length} {filteredPersons.length === 1 ? 'Person' : 'Personen'}
-            </span>
-            <button
-              onClick={() => openPersonForm()}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium flex items-center gap-2"
-            >
-              <span>+</span>
-              <span>Person</span>
-            </button>
-          </div>
-          <div className="mb-4">
-            <input
-              type="text"
-              value={personSearchQuery}
-              onChange={(e) => setPersonSearchQuery(e.target.value)}
-              placeholder="Suche nach Name, E-Mail oder Telefon..."
-              className="w-full border rounded px-4 py-2"
-            />
-          </div>
-
-          {filteredPersons.length === 0 && personSearchQuery && (
-            <div className="text-gray-500 text-sm mb-4">Keine Personen gefunden</div>
-          )}
-
-          <div className="space-y-3">
-            {filteredPersons.map((contact) => {
-              const isExpanded = expandedPersonIds.has(contact.id);
-              const family = contactFamilies.find((f) => f.id === contact.contact_family_id);
-              const familyName = family?.family_name;
-
-              return (
-                <div key={contact.id} className="border rounded-lg overflow-hidden">
-                  <div
-                    className="p-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-gray-100"
-                    onClick={() => toggleExpanded(contact.id, setExpandedPersonIds)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">👤</span>
-                      <div>
-                        <div className="font-semibold text-lg">
-                          {contact.last_name}, {contact.first_name}
-                        </div>
-                        {familyName && <div className="text-sm text-gray-600">👨‍👩‍👧 {familyName}</div>}
                       </div>
                     </div>
+
+                    {isExpanded && (
+                      <div className="p-4 bg-white">
+                        <ActionButtons
+                          onEdit={() => setEditContact(contact)}
+                          onDelete={() =>
+                            onDeletePerson(
+                              contact.id,
+                              `${contact.last_name}, ${contact.first_name}`
+                            )
+                          }
+                        />
+
+                        {/* Contact Details */}
+                        <PersonDetails
+                          familyName={familyName}
+                          family={family}
+                          email={contact.email}
+                          phone={contact.phone}
+                          birthdate={contact.birthdate}
+                        />
+                      </div>
+                    )}
                   </div>
-
-                  {isExpanded && (
-                    <div className="p-4 bg-white">
-                      <ActionButtons
-                        onEdit={() => setEditContact(contact)}
-                        onDelete={() =>
-                          onDeletePerson(contact.id, `${contact.last_name}, ${contact.first_name}`)
-                        }
-                      />
-
-                      {/* Contact Details */}
-                      <PersonDetails
-                        familyName={familyName}
-                        family={family}
-                        email={contact.email}
-                        phone={contact.phone}
-                        birthdate={contact.birthdate}
-                      />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {showFamilyForm && (
-        <ContactFamilyForm onAdd={onAddFamily} onCancel={() => setShowFamilyForm(false)} />
-      )}
+        {showFamilyForm && (
+          <ContactFamilyForm onAdd={onAddFamily} onCancel={() => setShowFamilyForm(false)} />
+        )}
 
-      {editFamily && (
-        <ContactFamilyForm
-          family={editFamily}
-          onUpdate={onUpdateFamily}
-          onCancel={() => setEditFamily(null)}
-        />
-      )}
+        {editFamily && (
+          <ContactFamilyForm
+            family={editFamily}
+            onUpdate={onUpdateFamily}
+            onCancel={() => setEditFamily(null)}
+          />
+        )}
 
-      {showPersonForm && (
-        <PersonForm
-          contactFamilies={contactFamilies}
-          preselectedFamilyId={preselectedFamilyId}
-          onSave={onAddPerson}
-          onCancel={() => {
-            setShowPersonForm(false);
-            setPreselectedFamilyId(null);
-          }}
-        />
-      )}
+        {showPersonForm && (
+          <PersonForm
+            contactFamilies={contactFamilies}
+            preselectedFamilyId={preselectedFamilyId}
+            onSave={onAddPerson}
+            onCancel={() => {
+              setShowPersonForm(false);
+              setPreselectedFamilyId(null);
+            }}
+          />
+        )}
 
-      {editContact && (
-        <PersonForm
-          contact={editContact}
-          contactFamilies={contactFamilies}
-          onSave={onUpdatePerson}
-          onCancel={() => setEditContact(null)}
-        />
-      )}
+        {editContact && (
+          <PersonForm
+            contact={editContact}
+            contactFamilies={contactFamilies}
+            onSave={onUpdatePerson}
+            onCancel={() => setEditContact(null)}
+          />
+        )}
 
-      {toast && <Toast message={toast} />}
-    </div>
+        {toast && <Toast message={toast} />}
+      </div>
+    </PullToRefresh>
   );
 }
