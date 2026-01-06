@@ -1,15 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { Recipe } from '../../lib/types';
-import {
-  getRecipes,
-  addRecipe,
-  deleteRecipe,
-  getActiveCookings,
-  updateRecipe,
-  uploadRecipeImage,
-  markRecipeAsCooked,
-} from '../../lib/recipes';
+import { addRecipe, updateRecipe, uploadRecipeImage } from '../../lib/recipes';
 import { useToast } from '../../hooks/useToast';
+import { useRecipes } from './useRecipes';
+import { useRecipeSearch } from './useRecipeSearch';
 import Toast from '../shared/Toast';
 import RecipeItem from './RecipeItem';
 import RecipeAddForm from './RecipeAddForm';
@@ -23,38 +17,17 @@ interface RecipeListProps {
 }
 
 export default function RecipeList({ familyId, currentUserId, currentProfileId }: RecipeListProps) {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const { recipes, loading, error, markedRecipeIds, fetchRecipes, handleDelete, handleMarkCooked } =
+    useRecipes(familyId);
+  const { searchQuery, setSearchQuery, filteredRecipes } = useRecipeSearch(
+    recipes,
+    markedRecipeIds
+  );
+  const { toast, showToast } = useToast();
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [editRecipe, setEditRecipe] = useState<Recipe | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [markedRecipeIds, setMarkedRecipeIds] = useState<Set<string>>(new Set());
-  const [searchQuery, setSearchQuery] = useState('');
-  const { toast, showToast } = useToast();
-
-  const fetchRecipes = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getRecipes(familyId);
-      setRecipes(data);
-
-      // Fetch active cookings
-      const cookings = await getActiveCookings(familyId);
-      const markedIds = new Set(cookings.map((c) => c.recipe_id));
-      setMarkedRecipeIds(markedIds);
-    } catch (err: any) {
-      setError(err?.message || String(err));
-      setRecipes([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRecipes();
-  }, [familyId]);
 
   const handleAdd = async (
     name: string,
@@ -94,17 +67,6 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Rezept wirklich löschen?')) return;
-
-    try {
-      await deleteRecipe(id);
-      await fetchRecipes();
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
-
   const handleUpdateRecipe = async (
     name: string,
     imageUrl: string | null,
@@ -141,26 +103,11 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
     setSelectedRecipe(recipe);
   };
 
-  const handleMarkCooked = async (recipeId: string) => {
-    try {
-      const recipe = recipes.find((r) => r.id === recipeId);
-      await markRecipeAsCooked(recipeId, familyId, currentProfileId || currentUserId);
-
-      // Show toast
-      if (recipe) {
-        setToast(`"${recipe.name}" als gekocht markiert \u2713`);
-        setTimeout(() => setToast(null), 3000);
-      }
-
-      // Refresh recipes in background
-      fetchRecipes();
-    } catch (err: any) {
-      alert(err.message || 'Fehler beim Markieren des Rezepts');
+  const handleMarkCookedWithToast = async (recipeId: string) => {
+    const recipe = await handleMarkCooked(recipeId, currentProfileId || currentUserId);
+    if (recipe) {
+      showToast(`"${recipe.name}" als gekocht markiert ✓`);
     }
-  };
-
-  const handleCloseDetail = () => {
-    setSelectedRecipe(null);
   };
 
   const handleEdit = () => {
@@ -168,37 +115,6 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
       setEditRecipe(selectedRecipe);
     }
   };
-
-  const handleUpdate = async () => {
-    await fetchRecipes();
-  };
-
-  // Filter recipes based on search query
-  const filteredRecipes = recipes.filter((recipe) => {
-    if (!searchQuery.trim()) return true;
-
-    const query = searchQuery.toLowerCase();
-
-    // Search in recipe name
-    if (recipe.name.toLowerCase().includes(query)) return true;
-
-    // Search in ingredients
-    if (recipe.ingredients?.some((ing) => ing.name.toLowerCase().includes(query))) return true;
-
-    return false;
-  });
-
-  // Sort recipes: marked for cooking first, then by name
-  const sortedRecipes = [...filteredRecipes].sort((a, b) => {
-    const aMarked = markedRecipeIds.has(a.id) ? 0 : 1;
-    const bMarked = markedRecipeIds.has(b.id) ? 0 : 1;
-
-    if (aMarked !== bMarked) {
-      return aMarked - bMarked;
-    }
-
-    return a.name.localeCompare(b.name, 'de');
-  });
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-4">
@@ -223,39 +139,25 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
       </div>
 
       <div className="mb-4 text-sm text-gray-600">
-        {loading
-          ? '🔄 Lade Rezepte…'
-          : searchQuery
-          ? `${filteredRecipes.length} von ${recipes.length} Rezept(en)`
-          : `${recipes.length} Rezept(e)`}
+        {loading ? '🔄 Lade Rezepte…' : `${filteredRecipes.length} Rezept(e)`}
       </div>
       {error && <div className="mb-4 text-red-600">Fehler: {error}</div>}
 
       {filteredRecipes.length === 0 && !loading && (
         <div className="text-center text-gray-500 py-12">
           <div className="text-6xl mb-4">🍽️</div>
-          {searchQuery ? (
-            <>
-              <p>Keine Rezepte gefunden.</p>
-              <p className="text-sm mt-2">Versuche einen anderen Suchbegriff.</p>
-            </>
-          ) : (
-            <>
-              <p>Noch keine Rezepte vorhanden.</p>
-              <p className="text-sm mt-2">Klicke auf &quot;Neues Rezept&quot; um zu starten.</p>
-            </>
-          )}
+          <p>Keine Rezepte vorhanden.</p>
         </div>
       )}
 
       <div className="grid grid-cols-2 gap-4">
-        {sortedRecipes.map((recipe) => (
+        {filteredRecipes.map((recipe) => (
           <RecipeItem
             key={recipe.id}
             recipe={recipe}
             onClick={() => handleRecipeClick(recipe)}
             isMarkedForCooking={markedRecipeIds.has(recipe.id)}
-            onMarkCooked={handleMarkCooked}
+            onMarkCooked={handleMarkCookedWithToast}
           />
         ))}
       </div>
@@ -269,13 +171,10 @@ export default function RecipeList({ familyId, currentUserId, currentProfileId }
           currentUserId={currentUserId}
           currentProfileId={currentProfileId}
           isMarkedForCooking={markedRecipeIds.has(selectedRecipe.id)}
-          onClose={handleCloseDetail}
-          onUpdate={handleUpdate}
+          onClose={() => setSelectedRecipe(null)}
+          onUpdate={fetchRecipes}
           onEdit={handleEdit}
-          onAddToShopping={(message) => {
-            setToast(message);
-            setTimeout(() => setToast(null), 4000);
-          }}
+          onAddToShopping={showToast}
         />
       )}
 

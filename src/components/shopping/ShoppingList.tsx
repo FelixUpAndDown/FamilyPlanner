@@ -1,15 +1,10 @@
-import { useEffect, useState } from 'react';
-import type { ShoppingItem, ShoppingPurchase } from '../../lib/types';
-import {
-  getShoppingItems,
-  addShoppingItem,
-  deleteShoppingItem,
-  deleteShoppingItems,
-  createPurchase,
-  getPurchaseHistory,
-  updateShoppingItemQuantity,
-} from '../../lib/shopping';
+import { useState, useEffect } from 'react';
+import type { ShoppingPurchase } from '../../lib/types';
+import { addShoppingItem, createPurchase, getPurchaseHistory } from '../../lib/shopping';
 import { useToast } from '../../hooks/useToast';
+import { useShoppingItems } from './useShoppingItems';
+import { useShoppingSelection } from './useShoppingSelection';
+import { sortShoppingItems } from './shoppingUtils';
 import Toast from '../shared/Toast';
 import ShoppingItemComponent from './ShoppingItem';
 import ShoppingAddForm from './ShoppingAddForm';
@@ -29,29 +24,16 @@ export default function ShoppingList({
   currentProfileId,
   users,
 }: ShoppingListProps) {
-  const [items, setItems] = useState<ShoppingItem[]>([]);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const { items, loading, error, fetchItems, handleDelete, handleDeleteSelected, updateQuantity } =
+    useShoppingItems(familyId);
+  const { selectedIds, handleToggleSelect, handleToggleAll, clearSelection, removeFromSelection } =
+    useShoppingSelection();
+  const { toast, showToast } = useToast();
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [purchases, setPurchases] = useState<ShoppingPurchase[]>([]);
-  const { toast, showToast } = useToast();
-
-  const fetchItems = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getShoppingItems(familyId);
-      setItems(data);
-    } catch (err: any) {
-      setError(err?.message || String(err));
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchHistory = async () => {
     try {
@@ -87,8 +69,7 @@ export default function ShoppingList({
         const combinedQty = existingQty + newQty;
 
         // Update the existing item
-        await updateShoppingItemQuantity(existingItem.id, combinedQty.toString());
-        await fetchItems();
+        await updateQuantity(existingItem.id, combinedQty.toString());
         setShowAddForm(false);
 
         // Show toast message
@@ -96,7 +77,6 @@ export default function ShoppingList({
           `Menge von "${name}" wurde von ${existingItem.quantity} auf ${combinedQty} ${unit} erhöht`
         );
       } else {
-        // Add new item
         await addShoppingItem(
           familyId,
           name,
@@ -114,40 +94,6 @@ export default function ShoppingList({
     }
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteShoppingItem(id);
-      await fetchItems();
-      setSelectedIds((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
-
-  const handleToggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
-
-  const handleToggleAll = () => {
-    if (selectedIds.size === items.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(items.map((item) => item.id)));
-    }
-  };
-
   const handlePurchase = async () => {
     if (selectedIds.size === 0) {
       alert('Bitte wähle mindestens einen Artikel aus');
@@ -158,7 +104,7 @@ export default function ShoppingList({
 
     try {
       await createPurchase(familyId, currentProfileId || currentUserId, selectedItems);
-      setSelectedIds(new Set());
+      clearSelection();
       await fetchItems();
       await fetchHistory();
       showToast(`${selectedItems.length} Artikel eingekauft ✓`);
@@ -167,30 +113,20 @@ export default function ShoppingList({
     }
   };
 
-  const handleDeleteSelected = async () => {
-    if (selectedIds.size === 0) {
-      alert('Bitte wähle mindestens einen Artikel aus');
-      return;
-    }
-
-    const confirmed = confirm(
-      `Möchtest du wirklich ${selectedIds.size} markierte${
-        selectedIds.size === 1 ? 'n' : ''
-      } Artikel löschen?`
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await deleteShoppingItems(Array.from(selectedIds));
-      setSelectedIds(new Set());
-      await fetchItems();
-    } catch (err: any) {
-      alert('Fehler beim Löschen: ' + (err.message || String(err)));
+  const handleDeleteSelectedItems = async () => {
+    const success = await handleDeleteSelected(selectedIds);
+    if (success) {
+      clearSelection();
     }
   };
 
+  const handleDeleteItem = async (id: string) => {
+    await handleDelete(id);
+    removeFromSelection(id);
+  };
+
   const allSelected = items.length > 0 && selectedIds.size === items.length;
+  const sortedItems = sortShoppingItems(items);
 
   return (
     <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow-md">
@@ -227,7 +163,7 @@ export default function ShoppingList({
       <div className="mb-4 flex flex-col gap-2">
         <div className="flex gap-2">
           <button
-            onClick={handleToggleAll}
+            onClick={() => handleToggleAll(items.map((item) => item.id))}
             className="px-3 py-2 border rounded hover:bg-gray-100 text-sm"
           >
             {allSelected ? 'Alle abwählen' : 'Alle auswählen'}
@@ -242,7 +178,7 @@ export default function ShoppingList({
         </div>
         {selectedIds.size > 0 && (
           <button
-            onClick={handleDeleteSelected}
+            onClick={handleDeleteSelectedItems}
             className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
             Markierte löschen ({selectedIds.size})
@@ -256,52 +192,25 @@ export default function ShoppingList({
       {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
 
       <ul className="flex flex-col gap-2">
-        {items
-          .sort((a, b) => {
-            // Items with deal_date and/or store come first
-            const aHasDeal = a.deal_date || a.store;
-            const bHasDeal = b.deal_date || b.store;
-
-            if (aHasDeal && !bHasDeal) return -1;
-            if (!aHasDeal && bHasDeal) return 1;
-
-            // Both have deals: sort by date, then by store
-            if (aHasDeal && bHasDeal) {
-              // Sort by date first
-              if (a.deal_date && b.deal_date) {
-                const dateCompare = a.deal_date.localeCompare(b.deal_date);
-                if (dateCompare !== 0) return dateCompare;
-              } else if (a.deal_date && !b.deal_date) {
-                return -1;
-              } else if (!a.deal_date && b.deal_date) {
-                return 1;
-              }
-
-              // Then by store
-              if (a.store && b.store) {
-                const storeCompare = a.store.localeCompare(b.store);
-                if (storeCompare !== 0) return storeCompare;
-              }
-            }
-
-            // Finally, sort alphabetically by name
-            return a.name.localeCompare(b.name);
-          })
-          .map((item) => (
-            <ShoppingItemComponent
-              key={item.id}
-              item={item}
-              isSelected={selectedIds.has(item.id)}
-              onToggleSelect={handleToggleSelect}
-              onDelete={handleDelete}
-            />
-          ))}
+        {sortedItems.map((item) => (
+          <ShoppingItemComponent
+            key={item.id}
+            item={item}
+            isSelected={selectedIds.has(item.id)}
+            onToggleSelect={handleToggleSelect}
+            onDelete={handleDeleteItem}
+          />
+        ))}
       </ul>
 
-      {items.length === 0 && !loading && (
-        <div className="text-center text-gray-500 py-8">
-          Keine Artikel auf der Liste. Klicke auf + um einen hinzuzufügen.
-        </div>
+      {showQuickAdd && (
+        <ShoppingQuickAdd
+          familyId={familyId}
+          currentProfileId={currentProfileId}
+          currentItems={items}
+          onClose={() => setShowQuickAdd(false)}
+          onItemsAdded={fetchItems}
+        />
       )}
 
       {showHistory && (
@@ -309,16 +218,6 @@ export default function ShoppingList({
           purchases={purchases}
           users={users}
           onClose={() => setShowHistory(false)}
-        />
-      )}
-
-      {showQuickAdd && (
-        <ShoppingQuickAdd
-          familyId={familyId}
-          currentProfileId={currentProfileId || currentUserId}
-          currentItems={items}
-          onClose={() => setShowQuickAdd(false)}
-          onItemsAdded={fetchItems}
         />
       )}
 

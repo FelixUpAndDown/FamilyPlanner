@@ -11,6 +11,7 @@ interface QuickAddItem {
   quantity: string;
   unit: string;
   isSelected: boolean;
+  had_deal: boolean;
 }
 
 interface ShoppingQuickAddProps {
@@ -41,17 +42,8 @@ export default function ShoppingQuickAdd({
     try {
       const data = await getUniquePurchasedItems(familyId);
 
-      // Filter out items that are currently on the shopping list with a deal_date
-      const filteredData = data.filter((item) => {
-        const hasDeals = currentItems.some(
-          (current) =>
-            current.name.toLowerCase() === item.name.toLowerCase() &&
-            current.quantity === item.quantity &&
-            current.unit === item.unit &&
-            current.deal_date
-        );
-        return !hasDeals;
-      });
+      // Filter out items that were ever purchased as a deal
+      const filteredData = data.filter((item) => !item.had_deal);
 
       setItems(filteredData.map((item) => ({ ...item, isSelected: false })));
     } catch (err) {

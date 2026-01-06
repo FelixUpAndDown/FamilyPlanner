@@ -82,12 +82,13 @@ export async function createPurchase(
 
   if (purchaseError) throw purchaseError;
 
-  // Create purchase items
+  // Create purchase items with deal_date
   const purchaseItems = items.map((item) => ({
     purchase_id: (purchase as any).id,
     name: item.name,
     quantity: item.quantity,
     unit: item.unit,
+    deal_date: item.deal_date || null,
   }));
 
   const { error: itemsError } = await supabase
@@ -147,6 +148,7 @@ export async function getUniquePurchasedItems(familyId: string): Promise<
     name: string;
     quantity: string;
     unit: string;
+    had_deal: boolean;
   }>
 > {
   // Get all purchases for the family
@@ -160,26 +162,35 @@ export async function getUniquePurchasedItems(familyId: string): Promise<
 
   const purchaseIds = purchases.map((p: any) => p.id);
 
-  // Get all purchase items
+  // Get all purchase items including deal_date
   const { data: items, error: itemsError } = await supabase
     .from('shopping_purchase_items')
-    .select('name, quantity, unit')
+    .select('name, quantity, unit, deal_date')
     .in('purchase_id', purchaseIds);
 
   if (itemsError) throw itemsError;
   if (!items) return [];
 
-  // Create unique combinations of name/quantity/unit
-  const uniqueMap = new Map<string, { name: string; quantity: string; unit: string }>();
+  // Create unique combinations of name/quantity/unit and track if any had a deal
+  const uniqueMap = new Map<
+    string,
+    { name: string; quantity: string; unit: string; had_deal: boolean }
+  >();
 
   for (const item of items) {
     const key = `${item.name.toLowerCase()}|${item.quantity}|${item.unit}`;
-    if (!uniqueMap.has(key)) {
+    const existing = uniqueMap.get(key);
+
+    if (!existing) {
       uniqueMap.set(key, {
         name: item.name,
         quantity: item.quantity,
         unit: item.unit,
+        had_deal: !!item.deal_date,
       });
+    } else if (item.deal_date && !existing.had_deal) {
+      // Update if this item had a deal and we haven't recorded that yet
+      existing.had_deal = true;
     }
   }
 
