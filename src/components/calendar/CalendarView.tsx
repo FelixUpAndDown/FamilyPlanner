@@ -27,11 +27,7 @@ export default function CalendarView() {
   );
   const { showEventForm, editEvent, selectedDate, openForNew, openForEdit, close } = useEventForm();
 
-  const [viewMode, setViewMode] = useState<'upcoming' | 'calendar' | 'week'>(() => {
-    const params = new URLSearchParams(window.location.search);
-    const view = params.get('view');
-    return view === 'week' ? 'week' : 'upcoming';
-  });
+  const [viewMode, setViewMode] = useState<'upcoming' | 'calendar' | 'week'>('upcoming');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedItem, setSelectedItem] = useState<AgendaItem | null>(null);
   const [selectedDayAgenda, setSelectedDayAgenda] = useState<AgendaItem[] | null>(null);
