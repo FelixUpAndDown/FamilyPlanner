@@ -22,6 +22,30 @@ export default function App() {
 
       {user && loadingProfile && <p>Loading family data...</p>}
 
+      {user && !loadingProfile && !familyId && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <p className="font-bold">Fehler: Kein Profil gefunden</p>
+          <p className="text-sm">Bitte kontaktiere den Administrator.</p>
+          <button onClick={handleLogout} className="mt-2 text-sm underline">Ausloggen</button>
+        </div>
+      )}
+
+      {user && !loadingProfile && familyId && !profileId && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <p className="font-bold">Fehler: Keine Profile-ID</p>
+          <button onClick={handleLogout} className="mt-2 text-sm underline">Ausloggen</button>
+        </div>
+      )}
+
+      {user && !loadingProfile && familyId && profileId && users.length === 0 && (
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+          <p className="font-bold">Warnung: Keine Familienmitglieder gefunden</p>
+          <p className="text-sm">FamilyId: {familyId}</p>
+          <p className="text-sm">ProfileId: {profileId}</p>
+          <button onClick={handleLogout} className="mt-2 text-sm underline">Ausloggen</button>
+        </div>
+      )}
+
       {user && !loadingProfile && familyId && profileId && users.length > 0 && (
         <>
           <div className="mb-4">
