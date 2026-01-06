@@ -78,11 +78,7 @@ export default function PersonForm({
     <div className="max-w-4xl mx-auto mt-10 p-4">
       <form onSubmit={handleSubmit}>
         <div className="flex items-center gap-3 mb-6">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="text-2xl"
-          >
+          <button type="button" onClick={onCancel} className="text-2xl">
             ←
           </button>
           <h3 className="text-xl font-bold">
@@ -91,151 +87,151 @@ export default function PersonForm({
         </div>
 
         <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium mb-1">Vorname *</label>
-                <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full border rounded px-3 py-2 text-base"
-                  placeholder="Max"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Nachname *</label>
-                <input
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="w-full border rounded px-3 py-2 text-base"
-                  placeholder="Mustermann"
-                  required
-                />
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Familie zuordnen (optional)</label>
-              <select
-                value={contactFamilyId}
-                onChange={(e) => setContactFamilyId(e.target.value)}
-                className="w-full border rounded px-3 py-2 text-base"
-              >
-                <option value="">Keine Familie (Einzelperson)</option>
-                {contactFamilies.map((family) => (
-                  <option key={family.id} value={family.id}>
-                    {family.family_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Geburtsdatum (optional)</label>
+              <label className="block text-sm font-medium mb-1">Vorname *</label>
               <input
-                type="date"
-                value={birthdate}
-                onChange={(e) => setBirthdate(e.target.value)}
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full border rounded px-3 py-2 text-base"
+                placeholder="Max"
+                required
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium mb-1">Telefon (optional)</label>
+              <label className="block text-sm font-medium mb-1">Nachname *</label>
               <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full border rounded px-3 py-2 text-base"
-                placeholder="+49 123 456789"
+                placeholder="Mustermann"
+                required
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Festnetz (optional)</label>
-              <input
-                type="tel"
-                value={phoneLandline}
-                onChange={(e) => setPhoneLandline(e.target.value)}
-                className="w-full border rounded px-3 py-2 text-base"
-                placeholder="+49 123 456789"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">E-Mail (optional)</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border rounded px-3 py-2 text-base"
-                placeholder="max@example.com"
-              />
-            </div>
-
-            <div className="border-t pt-3">
-              <h4 className="font-medium mb-3 text-sm text-gray-700">Anschrift (optional)</h4>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
-                <div className="sm:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">Straße</label>
-                  <input
-                    type="text"
-                    value={street}
-                    onChange={(e) => setStreet(e.target.value)}
-                    className="w-full border rounded px-3 py-2 text-base"
-                    placeholder="Musterstraße"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Nr.</label>
-                  <input
-                    type="text"
-                    value={houseNumber}
-                    onChange={(e) => setHouseNumber(e.target.value)}
-                    className="w-full border rounded px-3 py-2 text-base"
-                    placeholder="12"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">PLZ</label>
-                  <input
-                    type="text"
-                    value={zip}
-                    onChange={(e) => setZip(e.target.value)}
-                    className="w-full border rounded px-3 py-2 text-base"
-                    placeholder="12345"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">Ort</label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full border rounded px-3 py-2 text-base"
-                    placeholder="Musterstadt"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Land</label>
-                <input
-                  type="text"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full border rounded px-3 py-2 text-base"
-                  placeholder="Deutschland"
-                />
-              </div>
             </div>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Familie zuordnen (optional)</label>
+            <select
+              value={contactFamilyId}
+              onChange={(e) => setContactFamilyId(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-base"
+            >
+              <option value="">Keine Familie (Einzelperson)</option>
+              {contactFamilies.map((family) => (
+                <option key={family.id} value={family.id}>
+                  {family.family_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Geburtsdatum (optional)</label>
+            <input
+              type="date"
+              value={birthdate}
+              onChange={(e) => setBirthdate(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-base"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Telefon (optional)</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-base"
+              placeholder="+49 123 456789"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Festnetz (optional)</label>
+            <input
+              type="tel"
+              value={phoneLandline}
+              onChange={(e) => setPhoneLandline(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-base"
+              placeholder="+49 123 456789"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">E-Mail (optional)</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-base"
+              placeholder="max@example.com"
+            />
+          </div>
+
+          <div className="border-t pt-3">
+            <h4 className="font-medium mb-3 text-sm text-gray-700">Anschrift (optional)</h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+              <div className="sm:col-span-2">
+                <label className="block text-sm text-gray-600 mb-1">Straße</label>
+                <input
+                  type="text"
+                  value={street}
+                  onChange={(e) => setStreet(e.target.value)}
+                  className="w-full border rounded px-3 py-2 text-base"
+                  placeholder="Musterstraße"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Nr.</label>
+                <input
+                  type="text"
+                  value={houseNumber}
+                  onChange={(e) => setHouseNumber(e.target.value)}
+                  className="w-full border rounded px-3 py-2 text-base"
+                  placeholder="12"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">PLZ</label>
+                <input
+                  type="text"
+                  value={zip}
+                  onChange={(e) => setZip(e.target.value)}
+                  className="w-full border rounded px-3 py-2 text-base"
+                  placeholder="12345"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm text-gray-600 mb-1">Ort</label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full border rounded px-3 py-2 text-base"
+                  placeholder="Musterstadt"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Land</label>
+              <input
+                type="text"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="w-full border rounded px-3 py-2 text-base"
+                placeholder="Deutschland"
+              />
+            </div>
+          </div>
+        </div>
 
         <div className="flex gap-3 mt-6">
           <button

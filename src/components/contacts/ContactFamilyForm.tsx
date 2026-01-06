@@ -80,89 +80,85 @@ export default function ContactFamilyForm({
     <div className="max-w-4xl mx-auto mt-10 p-4">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex items-center gap-3 mb-6">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="text-2xl"
-          >
+          <button type="button" onClick={onCancel} className="text-2xl">
             ←
           </button>
           <h3 className="text-xl font-bold">
             {family ? 'Familie bearbeiten' : 'Neue Familie hinzufügen'}
           </h3>
         </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Familienname *</label>
+        <div>
+          <label className="block text-sm font-medium mb-1">Familienname *</label>
+          <input
+            type="text"
+            value={familyName}
+            onChange={(e) => setFamilyName(e.target.value)}
+            className="w-full border rounded px-3 py-2"
+            placeholder="z.B. Familie Müller"
+            required
+          />
+        </div>
+
+        <div className="border-t pt-4">
+          <h4 className="font-medium mb-3">Anschrift</h4>
+
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            <div className="col-span-2">
+              <label className="block text-sm text-gray-600 mb-1">Straße</label>
               <input
                 type="text"
-                value={familyName}
-                onChange={(e) => setFamilyName(e.target.value)}
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
                 className="w-full border rounded px-3 py-2"
-                placeholder="z.B. Familie Müller"
-                required
+                placeholder="Musterstraße"
               />
             </div>
-
-            <div className="border-t pt-4">
-              <h4 className="font-medium mb-3">Anschrift</h4>
-
-              <div className="grid grid-cols-3 gap-2 mb-3">
-                <div className="col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">Straße</label>
-                  <input
-                    type="text"
-                    value={street}
-                    onChange={(e) => setStreet(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="Musterstraße"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Nr.</label>
-                  <input
-                    type="text"
-                    value={houseNumber}
-                    onChange={(e) => setHouseNumber(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="12"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 mb-3">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">PLZ</label>
-                  <input
-                    type="text"
-                    value={zip}
-                    onChange={(e) => setZip(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="12345"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">Ort</label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="Musterstadt"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Land</label>
-                <input
-                  type="text"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                  placeholder="Deutschland"
-                />
-              </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Nr.</label>
+              <input
+                type="text"
+                value={houseNumber}
+                onChange={(e) => setHouseNumber(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="12"
+              />
             </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">PLZ</label>
+              <input
+                type="text"
+                value={zip}
+                onChange={(e) => setZip(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="12345"
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm text-gray-600 mb-1">Ort</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="Musterstadt"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Land</label>
+            <input
+              type="text"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+              placeholder="Deutschland"
+            />
+          </div>
+        </div>
 
         <div className="flex gap-3 mt-6">
           <button
