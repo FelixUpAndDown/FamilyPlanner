@@ -1,5 +1,6 @@
 import type { CalendarDay } from '../../lib/types';
 import { getEventIcon, getEventColorClasses } from './calendarUtils';
+import NavigationHeader from './NavigationHeader';
 
 interface CalendarGridProps {
   days: CalendarDay[];
@@ -20,23 +21,11 @@ export default function CalendarGrid({
 }: CalendarGridProps) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <button
-          onClick={onPreviousMonth}
-          className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded font-bold"
-        >
-          ←
-        </button>
-        <h2 className="text-lg font-semibold capitalize">
-          {currentMonth.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}
-        </h2>
-        <button
-          onClick={onNextMonth}
-          className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded font-bold"
-        >
-          →
-        </button>
-      </div>
+      <NavigationHeader
+        title={currentMonth.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}
+        onPrevious={onPreviousMonth}
+        onNext={onNextMonth}
+      />
 
       <div className="grid grid-cols-7 gap-1 mb-1">
         {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) => (

@@ -264,21 +264,41 @@ export default function RecipeDetail({
                 <label className="block text-sm font-medium text-blue-900 mb-3">
                   Für wie viele Personen möchtest du kochen?
                 </label>
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-2 items-center mb-3">
+                  <button
+                    onClick={() => setDesiredServings(Math.max(0.5, desiredServings - 0.5))}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded text-xl leading-none"
+                  >
+                    −
+                  </button>
                   <input
                     type="number"
                     min="0.5"
                     step="0.5"
                     value={desiredServings}
-                    onChange={(e) => setDesiredServings(parseFloat(e.target.value) || 1)}
-                    className="flex-1 border border-blue-300 rounded px-3 py-2"
+                    onChange={(e) => setDesiredServings(parseFloat(e.target.value) || 0.5)}
+                    className="flex-1 text-center border border-blue-300 rounded px-3 py-2 text-lg font-medium"
                   />
-                  <div className="text-sm text-blue-700 font-medium whitespace-nowrap">
-                    Multiplikator: {((desiredServings || 1) / (recipe.servings || 1)).toFixed(2)}x
+                  <button
+                    onClick={() => setDesiredServings(desiredServings + 0.5)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded text-xl leading-none"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="text-center mb-3">
+                  <div className="inline-block px-4 py-2 bg-blue-100 rounded-full">
+                    <span className="text-sm text-blue-700">
+                      Original: {recipe.servings} Personen
+                    </span>
+                    <span className="mx-2 text-blue-400">→</span>
+                    <span className="text-sm font-semibold text-blue-900">
+                      Faktor: {((desiredServings || 1) / (recipe.servings || 1)).toFixed(2)}x
+                    </span>
                   </div>
                 </div>
                 {desiredServings !== recipe.servings && (
-                  <div className="mt-3 p-2 bg-white rounded border border-blue-100">
+                  <div className="p-3 bg-white rounded border border-blue-100">
                     <h5 className="font-medium text-sm text-blue-900 mb-2">Angepasste Mengen:</h5>
                     <div className="space-y-1 max-h-40 overflow-y-auto">
                       {recipe.ingredients?.map((ing) => {

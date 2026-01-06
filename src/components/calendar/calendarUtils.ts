@@ -28,6 +28,16 @@ export function getNextFullHour(): string {
   return `${hours}:${minutes}`;
 }
 
+// Get the Monday of the current week
+export function getWeekStart(date: Date = new Date()): Date {
+  const weekday = date.getDay();
+  const diffToMonday = weekday === 0 ? -6 : 1 - weekday;
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() + diffToMonday);
+  return start;
+}
+
 // Get the appropriate icon/emoji for an agenda item type
 export function getEventIcon(type: string, data?: any): string {
   switch (type) {
@@ -288,4 +298,94 @@ export function createCalendarDays(
   }
 
   return days;
+}
+
+// Build all agenda items for a specific day
+export function buildDayAgenda(
+  date: Date,
+  calendarEvents: CalendarEvent[],
+  todos: Todo[],
+  birthdays: Contact[],
+  shoppingItems: ShoppingItem[]
+): AgendaItem[] {
+  const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const year = normalizedDate.getFullYear();
+  const month = String(normalizedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(normalizedDate.getDate()).padStart(2, '0');
+  const dateStr = `${year}-${month}-${day}`;
+
+  const dayItems: AgendaItem[] = [];
+
+  calendarEvents.forEach((event) => {
+    if (event.event_date === dateStr) {
+      dayItems.push({
+        type: 'event',
+        title: event.title,
+        id: event.id,
+        date: normalizedDate,
+        time: event.event_time,
+        description: event.description,
+        data: event,
+      });
+    }
+  });
+
+  todos.forEach((todo) => {
+    if (todo.due_at && todo.due_at.startsWith(dateStr)) {
+      dayItems.push({
+        type: 'todo',
+        title: todo.task,
+        id: todo.id,
+        date: normalizedDate,
+        description: todo.description,
+        data: todo,
+      });
+    }
+  });
+
+  birthdays.forEach((contact) => {
+    if (contact.birthdate) {
+      const bdayDate = new Date(contact.birthdate);
+      if (
+        bdayDate.getMonth() === normalizedDate.getMonth() &&
+        bdayDate.getDate() === normalizedDate.getDate()
+      ) {
+        dayItems.push({
+          type: 'birthday',
+          title: `${contact.first_name} ${contact.last_name}`,
+          id: contact.id,
+          date: normalizedDate,
+          data: contact,
+        });
+      }
+    }
+  });
+
+  shoppingItems.forEach((item) => {
+    if (item.deal_date === dateStr) {
+      const title = item.store ? `${item.name} (${item.store})` : item.name;
+      dayItems.push({
+        type: 'shopping',
+        title,
+        id: item.id,
+        date: normalizedDate,
+        description: `${item.quantity} ${item.unit}`,
+        data: item,
+      });
+    }
+  });
+
+  return dayItems;
+}
+
+// Get ISO week number
+export function getISOWeek(date: Date): number {
+  const temp = new Date(date);
+  temp.setHours(0, 0, 0, 0);
+  temp.setDate(temp.getDate() + 3 - ((temp.getDay() + 6) % 7));
+  const week1 = new Date(temp.getFullYear(), 0, 4);
+  return (
+    1 +
+    Math.round(((temp.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7)
+  );
 }

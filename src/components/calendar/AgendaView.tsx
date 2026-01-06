@@ -51,7 +51,7 @@ export default function AgendaView({ items, onEditEvent, onSelectItem }: AgendaV
                   : 'bg-gray-200 text-gray-800'
               }`}
             >
-              {isToday ? '🔵 Heute' : dateKey}
+              {isToday ? `🔵 Heute · ${dateKey}` : dateKey}
             </div>
 
             <div className="space-y-2">

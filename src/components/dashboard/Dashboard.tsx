@@ -30,7 +30,8 @@ export default function Dashboard({
   userEmail,
   onLogout,
 }: DashboardProps) {
-  const { openCount, noteCount, loading, familyName } = useDashboardData(familyId);
+  const { openCount, noteCount, todayEventsCount, loading, familyName } =
+    useDashboardData(familyId);
   const profileName = users.find((u) => u.id === currentProfileId)?.name ?? null;
 
   const tiles: DashboardTile[] = [
@@ -45,7 +46,7 @@ export default function Dashboard({
       key: 'calendar',
       emoji: '📅',
       label: 'Kalender',
-      subtitle: '',
+      subtitle: loading ? 'Lädt…' : todayEventsCount != null ? `${todayEventsCount} heute` : '—',
       onClick: onOpenCalendar,
     },
     {
