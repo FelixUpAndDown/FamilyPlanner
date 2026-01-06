@@ -75,16 +75,22 @@ export default function PersonForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-h-[90vh] overflow-y-auto sm:max-w-md">
-        <form onSubmit={handleSubmit}>
-          <div className="sticky top-0 bg-white p-3 sm:p-4 border-b">
-            <h3 className="text-lg font-bold">
-              {isEdit ? 'Person bearbeiten' : 'Neue Person hinzufügen'}
-            </h3>
-          </div>
+    <div className="max-w-4xl mx-auto mt-10 p-4">
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-2xl"
+          >
+            ←
+          </button>
+          <h3 className="text-xl font-bold">
+            {isEdit ? 'Person bearbeiten' : 'Neue Person hinzufügen'}
+          </h3>
+        </div>
 
-          <div className="p-3 sm:p-4 space-y-3">
+        <div className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium mb-1">Vorname *</label>
@@ -231,26 +237,25 @@ export default function PersonForm({
             </div>
           </div>
 
-          <div className="sticky bottom-0 bg-white p-3 sm:p-4 border-t flex gap-3">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 border rounded hover:bg-gray-100 text-base font-medium"
-            >
-              Abbrechen
-            </button>
-            <button
-              type="submit"
-              disabled={submitting || !firstName.trim() || !lastName.trim()}
-              className={`flex-1 text-white px-4 py-2 rounded disabled:opacity-50 text-base font-medium ${
-                isEdit ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'
-              }`}
-            >
-              {submitting ? 'Speichern...' : isEdit ? 'Speichern' : 'Hinzufügen'}
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="flex gap-3 mt-6">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 px-4 py-2 border rounded hover:bg-gray-100 text-base font-medium"
+          >
+            Abbrechen
+          </button>
+          <button
+            type="submit"
+            disabled={submitting || !firstName.trim() || !lastName.trim()}
+            className={`flex-1 text-white px-4 py-2 rounded disabled:opacity-50 text-base font-medium ${
+              isEdit ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'
+            }`}
+          >
+            {submitting ? 'Speichern...' : isEdit ? 'Speichern' : 'Hinzufügen'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

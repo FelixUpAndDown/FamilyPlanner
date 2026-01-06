@@ -210,12 +210,49 @@ export default function ContactList({ familyId }: ContactListProps) {
 
   return (
     <PullToRefresh onRefresh={refetch}>
-      <div className="max-w-4xl mx-auto mt-10 p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Kontakte</h2>
-        </div>
+      <div>
+        {/* Show form if any form is active */}
+        {showFamilyForm && (
+          <ContactFamilyForm onAdd={onAddFamily} onCancel={() => setShowFamilyForm(false)} />
+        )}
 
-        {/* View Mode Tabs */}
+        {editFamily && (
+          <ContactFamilyForm
+            family={editFamily}
+            onUpdate={onUpdateFamily}
+            onCancel={() => setEditFamily(null)}
+          />
+        )}
+
+        {showPersonForm && (
+          <PersonForm
+            contactFamilies={contactFamilies}
+            preselectedFamilyId={preselectedFamilyId}
+            onSave={onAddPerson}
+            onCancel={() => {
+              setShowPersonForm(false);
+              setPreselectedFamilyId(null);
+            }}
+          />
+        )}
+
+        {editContact && (
+          <PersonForm
+            contact={editContact}
+            contactFamilies={contactFamilies}
+            onSave={onUpdatePerson}
+            onCancel={() => setEditContact(null)}
+          />
+        )}
+
+        {/* Main content - hidden when any form is open */}
+        {!showFamilyForm && !editFamily && !showPersonForm && !editContact && (
+          <div className="max-w-4xl mx-auto mt-10 p-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Kontakte</h2>
+            </div>
+
+            {/* View Mode Tabs */}
         <div className="mb-4 flex gap-2">
           <button
             onClick={() => setViewMode('persons')}
@@ -446,38 +483,7 @@ export default function ContactList({ familyId }: ContactListProps) {
             </div>
           </div>
         )}
-
-        {showFamilyForm && (
-          <ContactFamilyForm onAdd={onAddFamily} onCancel={() => setShowFamilyForm(false)} />
-        )}
-
-        {editFamily && (
-          <ContactFamilyForm
-            family={editFamily}
-            onUpdate={onUpdateFamily}
-            onCancel={() => setEditFamily(null)}
-          />
-        )}
-
-        {showPersonForm && (
-          <PersonForm
-            contactFamilies={contactFamilies}
-            preselectedFamilyId={preselectedFamilyId}
-            onSave={onAddPerson}
-            onCancel={() => {
-              setShowPersonForm(false);
-              setPreselectedFamilyId(null);
-            }}
-          />
-        )}
-
-        {editContact && (
-          <PersonForm
-            contact={editContact}
-            contactFamilies={contactFamilies}
-            onSave={onUpdatePerson}
-            onCancel={() => setEditContact(null)}
-          />
+          </div>
         )}
 
         {toast && <Toast message={toast} />}

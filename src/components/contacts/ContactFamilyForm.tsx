@@ -77,16 +77,20 @@ export default function ContactFamilyForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <form onSubmit={handleSubmit} className="flex flex-col h-full">
-          <div className="p-4 border-b">
-            <h3 className="text-lg font-bold">
-              {family ? 'Familie bearbeiten' : 'Neue Familie hinzufügen'}
-            </h3>
-          </div>
-
-          <div className="overflow-y-auto flex-1 p-4 space-y-4">
+    <div className="max-w-4xl mx-auto mt-10 p-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-2xl"
+          >
+            ←
+          </button>
+          <h3 className="text-xl font-bold">
+            {family ? 'Familie bearbeiten' : 'Neue Familie hinzufügen'}
+          </h3>
+        </div>
             <div>
               <label className="block text-sm font-medium mb-1">Familienname *</label>
               <input
@@ -159,26 +163,24 @@ export default function ContactFamilyForm({
                 />
               </div>
             </div>
-          </div>
 
-          <div className="p-4 border-t flex gap-3">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              Abbrechen
-            </button>
-            <button
-              type="submit"
-              disabled={submitting || !familyName.trim()}
-              className="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
-            >
-              {submitting ? 'Speichern...' : family ? 'Speichern' : 'Familie hinzufügen'}
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="flex gap-3 mt-6">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+          >
+            Abbrechen
+          </button>
+          <button
+            type="submit"
+            disabled={submitting || !familyName.trim()}
+            className="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
+          >
+            {submitting ? 'Speichern...' : family ? 'Speichern' : 'Familie hinzufügen'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
