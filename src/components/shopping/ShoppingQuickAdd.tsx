@@ -145,23 +145,25 @@ export default function ShoppingQuickAdd({
         />
 
         {/* Action Buttons */}
-        <div className="p-4 border-b flex gap-2 flex-wrap">
-          <button
-            onClick={handleSelectAll}
-            className="px-3 py-1 text-sm border rounded hover:bg-gray-100"
-          >
-            Alle {filteredItems.length > 0 && `(${filteredItems.length})`} markieren/entmarkieren
-          </button>
-          <button
-            onClick={handleDeselectAll}
-            className="px-3 py-1 text-sm border rounded hover:bg-gray-100"
-          >
-            Alle abwählen
-          </button>
+        <div className="p-4 border-b space-y-2">
+          <div className="flex gap-2">
+            <button
+              onClick={handleSelectAll}
+              className="flex-1 px-3 py-2 text-sm border rounded hover:bg-gray-100"
+            >
+              Alle markieren
+            </button>
+            <button
+              onClick={handleDeselectAll}
+              className="flex-1 px-3 py-2 text-sm border rounded hover:bg-gray-100"
+            >
+              Alle abwählen
+            </button>
+          </div>
           <button
             onClick={handleAddToList}
             disabled={selectedCount === 0 || loading}
-            className="ml-auto bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {selectedCount > 0
               ? `${selectedCount} Artikel auf die Einkaufsliste`
