@@ -74,6 +74,8 @@ export function usePushNotifications(
       return;
     }
 
+    console.log('DEBUG: Subscribing with userId:', userId, 'familyId:', familyId);
+
     setLoading(true);
     setError(null);
 
