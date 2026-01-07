@@ -92,39 +92,40 @@ export default function TodoList({
         )}
 
         {/* Views */}
-        {!editTodo && (minimalMode ? (
-          <MinimalTodoView
-            todos={todos}
-            loading={loading}
-            onToggle={handleToggle}
-            onEdit={setEditTodo}
-          />
-        ) : (
-          <>
-            <TodoFilter filter={filter} setFilter={setFilter} />
-            <div className="mb-2 text-sm text-gray-600">
-              {loading ? '🔄 Lade Todos…' : `${todos.length} Todos geladen`}
-            </div>
-            {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
-            <ul className="flex flex-col gap-3">
-              {todos.map((todo) => (
-                <TodoItem
-                  key={todo.id}
-                  todo={todo}
-                  onToggle={handleToggle}
-                  onDelete={handleDelete}
-                  users={users}
-                  onEdit={() => setEditTodo(todo)}
-                  currentUserId={currentUserId}
-                  currentProfileId={currentProfileId}
-                  onRefresh={fetchTodos}
-                  commentCount={commentMeta[todo.id]?.count ?? 0}
-                  comments={commentMeta[todo.id]?.comments ?? []}
-                />
-              ))}
-            </ul>
-          </>
-        ))}
+        {!editTodo &&
+          (minimalMode ? (
+            <MinimalTodoView
+              todos={todos}
+              loading={loading}
+              onToggle={handleToggle}
+              onEdit={setEditTodo}
+            />
+          ) : (
+            <>
+              <TodoFilter filter={filter} setFilter={setFilter} />
+              <div className="mb-2 text-sm text-gray-600">
+                {loading ? '🔄 Lade Todos…' : `${todos.length} Todos geladen`}
+              </div>
+              {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
+              <ul className="flex flex-col gap-3">
+                {todos.map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    todo={todo}
+                    onToggle={handleToggle}
+                    onDelete={handleDelete}
+                    users={users}
+                    onEdit={() => setEditTodo(todo)}
+                    currentUserId={currentUserId}
+                    currentProfileId={currentProfileId}
+                    onRefresh={fetchTodos}
+                    commentCount={commentMeta[todo.id]?.count ?? 0}
+                    comments={commentMeta[todo.id]?.comments ?? []}
+                  />
+                ))}
+              </ul>
+            </>
+          ))}
 
         {toast && <Toast message={toast} />}
       </div>

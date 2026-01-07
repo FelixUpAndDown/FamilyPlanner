@@ -140,111 +140,109 @@ export default function TodoEditForm({
     <div className="flex flex-col gap-3 p-4 bg-white border rounded-lg shadow-sm">
       <h3 className="text-base font-semibold">Todo bearbeiten</h3>
 
-        {/* Title */}
-        <div>
-          <label className="text-sm font-medium mb-1 block">Titel</label>
-          <div className="border p-2 rounded bg-gray-50 text-gray-700">
-            {todo.task}
-          </div>
-        </div>
+      {/* Title */}
+      <div>
+        <label className="text-sm font-medium mb-1 block">Titel</label>
+        <div className="border p-2 rounded bg-gray-50 text-gray-700">{todo.task}</div>
+      </div>
 
-        {/* Description */}
-        <div>
-          <label className="text-sm font-medium mb-1 block">Beschreibung</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Beschreibung (optional)"
-            className="border p-2 rounded w-full"
-          />
-        </div>
-
-        {/* Due date */}
-        <div>
-          <label className="text-sm font-medium mb-1 block">Fällig am (optional)</label>
-          <div className="flex gap-2">
-            <input
-              type="date"
-              value={dueAt}
-              onChange={(e) => setDueAt(e.target.value)}
-              className="flex-1 border p-2 rounded"
-            />
-            {dueAt && (
-              <button
-                type="button"
-                onClick={() => setDueAt('')}
-                className="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm"
-                title="Löschen"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Assigned to */}
-        <AssignedSelect
-          label="Zugewiesen an (optional)"
-          value={assignedTo}
-          users={users}
-          onChange={setAssignedTo}
+      {/* Description */}
+      <div>
+        <label className="text-sm font-medium mb-1 block">Beschreibung</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Beschreibung (optional)"
+          className="border p-2 rounded w-full"
         />
+      </div>
 
-        {/* Comments section */}
-        <div className="mt-2 pt-3 border-t">
-          <h4 className="font-medium mb-2 text-sm">Kommentare</h4>
-
-          {/* Add comment */}
-          <div className="flex gap-2 mb-3">
-            <input
-              type="text"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Neuer Kommentar"
-              className="border p-2 rounded flex-1 text-sm"
-            />
+      {/* Due date */}
+      <div>
+        <label className="text-sm font-medium mb-1 block">Fällig am (optional)</label>
+        <div className="flex gap-2">
+          <input
+            type="date"
+            value={dueAt}
+            onChange={(e) => setDueAt(e.target.value)}
+            className="flex-1 border p-2 rounded"
+          />
+          {dueAt && (
             <button
-              onClick={addComment}
-              className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+              type="button"
+              onClick={() => setDueAt('')}
+              className="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm"
+              title="Löschen"
             >
-              +
+              ✕
             </button>
-          </div>
-
-          {/* Comments list */}
-          <div className="flex flex-col gap-2 max-h-48 overflow-auto">
-            {loadingComments ? (
-              <div className="text-xs text-gray-500">Lade Kommentare…</div>
-            ) : comments.length > 0 ? (
-              comments.map((c) => (
-                <div key={c.id} className="border rounded p-2 bg-gray-50 text-sm">
-                  <div className="text-xs text-gray-600 mb-1">
-                    {c.creator?.name || 'Unbekannt'} – {new Date(c.created_at).toLocaleString()}
-                  </div>
-                  <div className="text-sm">{c.text}</div>
-                </div>
-              ))
-            ) : (
-              <div className="text-xs text-gray-500">Noch keine Kommentare</div>
-            )}
-          </div>
+          )}
         </div>
+      </div>
 
-        {/* Buttons speichern / abbrechen */}
-        <div className="flex gap-2 mt-3 pt-3 border-t">
+      {/* Assigned to */}
+      <AssignedSelect
+        label="Zugewiesen an (optional)"
+        value={assignedTo}
+        users={users}
+        onChange={setAssignedTo}
+      />
+
+      {/* Comments section */}
+      <div className="mt-2 pt-3 border-t">
+        <h4 className="font-medium mb-2 text-sm">Kommentare</h4>
+
+        {/* Add comment */}
+        <div className="flex gap-2 mb-3">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Neuer Kommentar"
+            className="border p-2 rounded flex-1 text-sm"
+          />
           <button
-            onClick={save}
-            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium"
+            onClick={addComment}
+            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
           >
-            Speichern
-          </button>
-          <button 
-            onClick={onClose} 
-            className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 text-sm font-medium"
-          >
-            Abbrechen
+            +
           </button>
         </div>
+
+        {/* Comments list */}
+        <div className="flex flex-col gap-2 max-h-48 overflow-auto">
+          {loadingComments ? (
+            <div className="text-xs text-gray-500">Lade Kommentare…</div>
+          ) : comments.length > 0 ? (
+            comments.map((c) => (
+              <div key={c.id} className="border rounded p-2 bg-gray-50 text-sm">
+                <div className="text-xs text-gray-600 mb-1">
+                  {c.creator?.name || 'Unbekannt'} – {new Date(c.created_at).toLocaleString()}
+                </div>
+                <div className="text-sm">{c.text}</div>
+              </div>
+            ))
+          ) : (
+            <div className="text-xs text-gray-500">Noch keine Kommentare</div>
+          )}
+        </div>
+      </div>
+
+      {/* Buttons speichern / abbrechen */}
+      <div className="flex gap-2 mt-3 pt-3 border-t">
+        <button
+          onClick={save}
+          className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium"
+        >
+          Speichern
+        </button>
+        <button
+          onClick={onClose}
+          className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 text-sm font-medium"
+        >
+          Abbrechen
+        </button>
+      </div>
     </div>
   );
 }
