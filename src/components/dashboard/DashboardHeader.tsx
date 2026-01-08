@@ -12,7 +12,6 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({
-  familyName,
   profileName,
   userEmail,
   currentUserId,
