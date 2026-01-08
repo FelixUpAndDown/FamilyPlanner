@@ -23,12 +23,10 @@ export default function DashboardHeader({
   return (
     <div className="flex items-center justify-between mb-6 bg-gradient-to-r from-blue-800 via-blue-400 to-green-400 rounded-2xl shadow-lg p-6">
       <div>
+        <h1 className="text-3xl font-bold text-white flex items-center gap-2 mb-4">👨‍👩‍👧 FamilyApp</h1>
         <div className="text-xs font-medium text-white/80 uppercase tracking-wider mb-1">
-          Willkommen, Familie
+          Willkommen, {profileName}!
         </div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-          👨‍👩‍👧 {familyName ?? '—'}
-        </h1>
       </div>
 
       <SettingsMenu
