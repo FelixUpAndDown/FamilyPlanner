@@ -10,27 +10,41 @@ import CalendarView from './components/calendar/CalendarView';
 import { useAuth } from './hooks/useAuth';
 
 export default function App() {
-  const { user, familyId, profileId, users, loadingProfile, handleLoginSuccess, handleLogout } =
-    useAuth();
+  const {
+    user, // Current logged-in user object (null if not logged in)
+    familyId, // Family ID for the user
+    profileId, // Profile ID for the user
+    users, // List of users in the family/group
+    loadingProfile, // Loading state for profile data
+    handleLoginSuccess, // Callback for successful login
+    handleLogout, // Callback for logout
+  } = useAuth();
+
+  // State for current view (dashboard, todos, notes, etc.)
   const [view, setView] = useState<
     'dashboard' | 'todos' | 'notes' | 'shopping' | 'recipes' | 'contacts' | 'calendar'
   >('dashboard');
 
   return (
     <div className="p-4 max-w-sm mx-auto">
+      {/* If not logged in, show login form */}
       {!user && <Login onLoginSuccess={handleLoginSuccess} />}
 
-      {user && loadingProfile && <p>Loading family data...</p>}
+      {/* If logged in but profile is still loading, show loading message */}
+      {loadingProfile && user && <p>⚙️ Loading family data...</p>}
 
+      {/* If logged in but no family/profile found, show error */}
       {user && !loadingProfile && !familyId && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p className="font-bold">Fehler: Kein Profil gefunden</p>
-          <p className="text-sm">Bitte kontaktiere den Administrator.</p>
+          <p className="font-bold">Error: No profile found</p>
+          <p className="text-sm">Please contact the administrator.</p>
         </div>
       )}
 
-      {user && !loadingProfile && familyId && profileId && users.length > 0 && (
+      {/* If user, profile, and family are loaded, show main app views */}
+      {!loadingProfile && user && familyId && profileId && users.length > 0 && (
         <>
+          {/* Show back-to-dashboard button on all subviews except dashboard */}
           <div className="mb-4">
             {(view === 'todos' ||
               view === 'notes' ||
@@ -41,7 +55,7 @@ export default function App() {
               <button
                 onClick={() => setView('dashboard')}
                 className="w-full flex items-center gap-3 bg-white border border-gray-200 px-4 py-2 rounded shadow-sm hover:shadow focus:outline-none"
-                aria-label="Zurück zum Dashboard"
+                aria-label="Back to Dashboard"
               >
                 <span className="text-lg">←</span>
                 <span className="font-medium">Home</span>
@@ -49,6 +63,7 @@ export default function App() {
             )}
           </div>
 
+          {/* Render the current view based on state */}
           {view === 'dashboard' && (
             <Dashboard
               familyId={familyId}
