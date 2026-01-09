@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import type { Todo, TodoFilterType } from '../../lib/types';
-import { TodoItem, TodoAddForm, TodoFilter, TodoEditForm } from './index';
+import TodoItem from './TodoItem';
+import TodoAddForm from './TodoAddForm';
+import TodoEditForm from './TodoEditForm';
+import TodoFilter from './TodoFilter';
 import { useToast } from '../../hooks/useToast';
 import Toast from '../shared/Toast';
 import { PullToRefresh } from '../shared/PullToRefresh';

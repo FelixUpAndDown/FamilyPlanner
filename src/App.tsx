@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TodoList } from './components/todos';
+import TodoList from './components/todos';
 import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
 import NoteList from './components/notes/NoteList';

@@ -98,7 +98,7 @@ export default function TodoItem({
             type="checkbox"
             checked={todo.isDone}
             onChange={() => onToggle(todo)}
-            className="w-5 h-5 accent-blue-600 mt-0.5 flex-shrink-0"
+            className="w-5 h-5 accent-blue-600 mt-0.5 shrink-0"
           />
           <div className="flex-1">
             <p
@@ -109,7 +109,7 @@ export default function TodoItem({
               {todo.task || 'Keine Aufgabe'}
             </p>
           </div>
-          <div className="flex gap-4 flex-shrink-0">
+          <div className="flex gap-4 shrink-0">
             <button
               onClick={onEdit}
               className="text-blue-500 hover:text-blue-700 font-bold text-sm"
