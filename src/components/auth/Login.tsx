@@ -34,7 +34,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm flex flex-col items-center">
         <div className="w-20 h-20 mb-4 flex items-center justify-center rounded-full bg-blue-100 text-4xl">
           👨‍👩‍👧‍👦
