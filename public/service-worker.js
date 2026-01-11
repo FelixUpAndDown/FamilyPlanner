@@ -3,12 +3,12 @@
 
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing...');
-  self.skipWaiting();
+  globalThis.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   console.log('Service Worker activating...');
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(globalThis.clients.claim());
 });
 
 // Push-Event Handler
@@ -25,6 +25,7 @@ self.addEventListener('push', (event) => {
     try {
       data = event.data.json();
     } catch (e) {
+      console.error('Error parsing push event data as JSON:', e);
       data.body = event.data.text();
     }
   }
@@ -50,7 +51,7 @@ self.addEventListener('push', (event) => {
     ],
   };
 
-  event.waitUntil(self.registration.showNotification(data.title, options));
+  event.waitUntil(globalThis.registration.showNotification(data.title, options));
 });
 
 // Notification Click Handler
@@ -66,18 +67,19 @@ self.addEventListener('notificationclick', (event) => {
   const urlToOpen = event.notification.data?.url || '/';
 
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // Prüfe ob die App bereits geöffnet ist
-      for (let i = 0; i < clientList.length; i++) {
-        const client = clientList[i];
-        if (client.url === new URL(urlToOpen, self.location.origin).href && 'focus' in client) {
-          return client.focus();
+    globalThis.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // Prüfe ob die App bereits geöffnet ist
+        for (const client of clientList) {
+          if (client.url === new URL(urlToOpen, self.location.origin).href && 'focus' in client) {
+            return client.focus();
+          }
         }
-      }
-      // Öffne neues Fenster wenn App nicht geöffnet ist
-      if (self.clients.openWindow) {
-        return self.clients.openWindow(urlToOpen);
-      }
-    })
+        // Öffne neues Fenster wenn App nicht geöffnet ist
+        if (globalThis.clients.openWindow) {
+          return globalThis.clients.openWindow(urlToOpen);
+        }
+      })
   );
 });
