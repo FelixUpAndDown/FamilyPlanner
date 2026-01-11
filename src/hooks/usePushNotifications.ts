@@ -19,7 +19,7 @@ const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('-', '/');
-  const rawData = window.atob(base64);
+  const rawData = globalThis.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.codePointAt(i) || 0;
@@ -39,10 +39,10 @@ export function usePushNotifications(
 
   useEffect(() => {
     // Prüfe ob Push-Notifications unterstützt werden
-    const supported = 'serviceWorker' in navigator && 'PushManager' in window;
+    const supported = 'serviceWorker' in navigator && 'PushManager' in globalThis;
     setIsSupported(supported);
 
-    if (supported && 'Notification' in window) {
+    if (supported && 'Notification' in globalThis) {
       setPermission(Notification.permission);
       checkSubscription();
     }
