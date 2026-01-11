@@ -1,9 +1,16 @@
+// CalendarEventForm handles creation and editing of calendar events.
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { addCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../../lib/calendar';
 import { formatTime, getNextFullHour } from './calendarUtils';
 import type { CalendarEvent } from '../../lib/types';
 
+// Props for CalendarEventForm:
+// - event: event to edit (optional)
+// - initialDate: date to prefill (optional)
+// - onSubmit: callback after submit
+// - onCancel: callback for cancel
+// - onSuccess: callback for success message (optional)
 interface CalendarEventFormProps {
   event?: CalendarEvent | null;
   initialDate?: Date | null;
@@ -12,22 +19,27 @@ interface CalendarEventFormProps {
   onSuccess?: (message: string) => void;
 }
 
+type ReadonlyCalendarEventFormProps = Readonly<CalendarEventFormProps>;
+
 export default function CalendarEventForm({
   event,
   initialDate,
   onSubmit,
   onCancel,
   onSuccess,
-}: CalendarEventFormProps) {
+}: ReadonlyCalendarEventFormProps) {
+  // Get user and family info from auth hook
   const { user, familyId: userFamilyId } = useAuth();
   const familyId = userFamilyId || '';
   const userId = user?.id || '';
 
+  // State for form fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [eventDate, setEventDate] = useState('');
   const [eventTime, setEventTime] = useState('');
 
+  // Prefill form fields when editing or creating
   useEffect(() => {
     if (event) {
       setTitle(event.title);
@@ -48,6 +60,7 @@ export default function CalendarEventForm({
     }
   }, [event, initialDate]);
 
+  // Handle form submit for add/edit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !eventDate) return;
@@ -66,6 +79,7 @@ export default function CalendarEventForm({
     }
   };
 
+  // Handle delete event
   const handleDelete = async () => {
     if (!event) return;
     if (!confirm('Termin wirklich löschen?')) return;
@@ -78,10 +92,12 @@ export default function CalendarEventForm({
     }
   };
 
+  // Render the form UI
   return (
     <div className="max-w-2xl mx-auto pb-24">
       {/* Header with back button */}
       <div className="sticky top-0 bg-white border-b z-10 px-4 py-3 flex items-center gap-3 shadow-sm mb-4">
+        {/* Cancel/back button */}
         <button
           onClick={onCancel}
           className="text-gray-600 hover:text-gray-800 text-2xl"
@@ -90,16 +106,19 @@ export default function CalendarEventForm({
         >
           ←
         </button>
+        {/* Title for form mode */}
         <h3 className="text-lg font-bold flex-1">{event ? 'Termin bearbeiten' : 'Neuer Termin'}</h3>
       </div>
 
       {/* Form Content */}
       <form id="calendar-event-form" onSubmit={handleSubmit} className="px-4 space-y-4">
+        {/* Title input */}
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label htmlFor="event-title" className="block text-sm font-medium mb-1">
             Titel <span className="text-red-500">*</span>
           </label>
           <input
+            id="event-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -108,12 +127,14 @@ export default function CalendarEventForm({
           />
         </div>
 
+        {/* Date input */}
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label htmlFor="event-date" className="block text-sm font-medium mb-1">
             Datum <span className="text-red-500">*</span>
           </label>
           <div className="flex gap-2">
             <input
+              id="event-date"
               type="date"
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
@@ -133,10 +154,14 @@ export default function CalendarEventForm({
           </div>
         </div>
 
+        {/* Time input */}
         <div>
-          <label className="block text-sm font-medium mb-1">Uhrzeit</label>
+          <label htmlFor="event-time" className="block text-sm font-medium mb-1">
+            Uhrzeit
+          </label>
           <div className="flex gap-2">
             <input
+              id="event-time"
               type="time"
               value={eventTime}
               onChange={(e) => setEventTime(e.target.value)}
@@ -161,9 +186,13 @@ export default function CalendarEventForm({
           </div>
         </div>
 
+        {/* Description input */}
         <div>
-          <label className="block text-sm font-medium mb-1">Beschreibung</label>
+          <label htmlFor="event-description" className="block text-sm font-medium mb-1">
+            Beschreibung
+          </label>
           <textarea
+            id="event-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full border border-gray-300 rounded p-2"
@@ -174,6 +203,7 @@ export default function CalendarEventForm({
 
       {/* Fixed Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-3 flex gap-2">
+        {/* Delete button for edit mode */}
         {event && (
           <button
             type="button"
@@ -183,6 +213,7 @@ export default function CalendarEventForm({
             Löschen
           </button>
         )}
+        {/* Cancel button */}
         <button
           type="button"
           onClick={onCancel}
@@ -190,6 +221,7 @@ export default function CalendarEventForm({
         >
           Abbrechen
         </button>
+        {/* Submit button */}
         <button
           type="submit"
           form="calendar-event-form"

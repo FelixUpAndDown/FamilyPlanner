@@ -48,7 +48,7 @@ export default function CalendarView() {
   useEffect(() => {
     setSelectedDay(null);
     close();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Reset selected day and close event form when view mode changes
   }, [viewMode]);
 
   const agendaItems = createAgendaItems(calendarEvents, todos, birthdays, shoppingItems, viewMode);
@@ -60,10 +60,77 @@ export default function CalendarView() {
     shoppingItems
   );
 
+  let mainView;
+  if (showEventForm) {
+    mainView = (
+      <CalendarEventForm
+        event={editEvent}
+        initialDate={selectedDate}
+        onSubmit={async () => {
+          await fetchData();
+          close();
+        }}
+        onCancel={close}
+        onSuccess={showToast}
+      />
+    );
+  } else if (viewMode === 'calendar') {
+    mainView = (
+      <>
+        {/* Day detail above the calendar grid, shown when a day is selected */}
+        {selectedDayAgenda && selectedDay && (
+          <div ref={dayDetailRef}>
+            <DayDetail
+              date={selectedDay}
+              items={selectedDayAgenda}
+              onClose={() => setSelectedDay(null)}
+              onEditEvent={openForEdit}
+            />
+          </div>
+        )}
+        <CalendarGrid
+          days={calendarDays}
+          currentMonth={currentMonth}
+          onPreviousMonth={() =>
+            setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
+          }
+          onNextMonth={() =>
+            setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
+          }
+          onAddEvent={openForNew}
+          onSelectDay={handleSelectDay}
+        />
+      </>
+    );
+  } else if (viewMode === 'week') {
+    mainView = (
+      <WeekView
+        weekStart={weekStart}
+        calendarEvents={calendarEvents}
+        todos={todos}
+        birthdays={birthdays}
+        shoppingItems={shoppingItems}
+        onPreviousWeek={() => {
+          const prev = new Date(weekStart);
+          prev.setDate(prev.getDate() - 7);
+          setWeekStart(prev);
+        }}
+        onNextWeek={() => {
+          const next = new Date(weekStart);
+          next.setDate(next.getDate() + 7);
+          setWeekStart(next);
+        }}
+        onEditEvent={openForEdit}
+      />
+    );
+  } else {
+    mainView = <AgendaView items={agendaItems} onEditEvent={openForEdit} />;
+  }
+
   return (
     <PullToRefresh onRefresh={fetchData}>
       <div className="p-4 max-w-2xl mx-auto">
-        {/* Header */}
+        {/* Main header with calendar title and add event button */}
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">Kalender</h1>
           <button
@@ -74,75 +141,13 @@ export default function CalendarView() {
           </button>
         </div>
 
-        {/* View Mode Selector */}
+        {/* Selector for calendar, week, or upcoming view */}
         <ViewModeSelector viewMode={viewMode} onChange={setViewMode} />
 
-        {/* Event Form */}
-        {showEventForm && (
-          <CalendarEventForm
-            event={editEvent}
-            initialDate={selectedDate}
-            onSubmit={async () => {
-              await fetchData();
-              close();
-            }}
-            onCancel={close}
-            onSuccess={showToast}
-          />
-        )}
+        {/* Main view: event form, calendar, week, or agenda */}
+        {mainView}
 
-        {/* Views - nur anzeigen wenn kein EventForm offen ist */}
-        {!showEventForm &&
-          (viewMode === 'calendar' ? (
-            <>
-              {/* Day Detail oberhalb */}
-              {selectedDayAgenda && selectedDay && (
-                <div ref={dayDetailRef}>
-                  <DayDetail
-                    date={selectedDay}
-                    items={selectedDayAgenda}
-                    onClose={() => setSelectedDay(null)}
-                    onEditEvent={openForEdit}
-                  />
-                </div>
-              )}
-
-              <CalendarGrid
-                days={calendarDays}
-                currentMonth={currentMonth}
-                onPreviousMonth={() =>
-                  setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
-                }
-                onNextMonth={() =>
-                  setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
-                }
-                onAddEvent={openForNew}
-                onSelectDay={handleSelectDay}
-              />
-            </>
-          ) : viewMode === 'week' ? (
-            <WeekView
-              weekStart={weekStart}
-              calendarEvents={calendarEvents}
-              todos={todos}
-              birthdays={birthdays}
-              shoppingItems={shoppingItems}
-              onPreviousWeek={() => {
-                const prev = new Date(weekStart);
-                prev.setDate(prev.getDate() - 7);
-                setWeekStart(prev);
-              }}
-              onNextWeek={() => {
-                const next = new Date(weekStart);
-                next.setDate(next.getDate() + 7);
-                setWeekStart(next);
-              }}
-              onEditEvent={openForEdit}
-            />
-          ) : (
-            <AgendaView items={agendaItems} onEditEvent={openForEdit} />
-          ))}
-
+        {/* Toast notification for feedback messages */}
         {toast && <Toast message={toast} />}
       </div>
     </PullToRefresh>

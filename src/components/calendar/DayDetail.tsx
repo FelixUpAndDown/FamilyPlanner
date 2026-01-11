@@ -9,13 +9,16 @@ interface DayDetailProps {
   compact?: boolean;
 }
 
+type ReadonlyDayDetailProps = Readonly<DayDetailProps>;
+
+// DayDetail component displays all agenda items for a specific day, including birthdays, todos, and events.
 export default function DayDetail({
   date,
   items,
   onClose,
   onEditEvent,
   compact = false,
-}: DayDetailProps) {
+}: ReadonlyDayDetailProps) {
   return (
     <div
       className={`p-4 bg-gray-50 border rounded-lg ${
@@ -38,10 +41,11 @@ export default function DayDetail({
         </button>
       </div>
       {items.length === 0 ? (
-        <p className="text-gray-500 text-sm">Keine Termine für diesen Tag</p>
+        <p className="text-gray-500 text-sm">No appointments for this day</p>
       ) : (
         <ul className="space-y-2">
           {items.map((item) => {
+            // Calculate age text for birthday items
             let ageText = '';
             if (item.type === 'birthday') {
               const contact = item.data as Contact;
@@ -49,7 +53,7 @@ export default function DayDetail({
                 const birthYear = new Date(contact.birthdate).getFullYear();
                 const currentYear = item.date.getFullYear();
                 const age = currentYear - birthYear;
-                ageText = `wird ${age} Jahre alt`;
+                ageText = `will be ${age} years old`;
               }
             }
 
@@ -65,25 +69,30 @@ export default function DayDetail({
                     <div className="font-medium text-sm">
                       {getEventIcon(item.type, item.data)} {item.title}
                     </div>
+                    {/* Show age for birthday items */}
                     {item.type === 'birthday' && ageText && (
                       <div className="text-xs text-gray-600 mt-1">🎈 {ageText}</div>
                     )}
+                    {/* Show description if available */}
                     {item.description && (
                       <div className="text-xs text-gray-600 mt-1">{item.description}</div>
                     )}
+                    {/* Show time if available */}
                     {item.time && (
                       <div className="text-xs text-gray-500 mt-1">🕐 {formatTime(item.time)}</div>
                     )}
+                    {/* Show assigned person for todos if available */}
                     {item.type === 'todo' && (item.data as Todo).assigned && (
                       <div className="text-xs text-gray-600 mt-1">
                         👤 {(item.data as Todo).assigned?.name}
                       </div>
                     )}
                   </div>
+                  {/* Edit button for events */}
                   {item.type === 'event' && onEditEvent && (
                     <button
                       onClick={() => onEditEvent(item.data as CalendarEvent)}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium flex-shrink-0"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium shrink-0"
                     >
                       ✏️
                     </button>

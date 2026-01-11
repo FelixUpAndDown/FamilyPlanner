@@ -4,7 +4,13 @@ interface NavigationHeaderProps {
   onNext: () => void;
 }
 
-export default function NavigationHeader({ title, onPrevious, onNext }: NavigationHeaderProps) {
+type ReadonlyNavigationHeaderProps = Readonly<NavigationHeaderProps>;
+
+export default function NavigationHeader({
+  title,
+  onPrevious,
+  onNext,
+}: ReadonlyNavigationHeaderProps) {
   return (
     <div className="flex items-center justify-between mb-4">
       <button

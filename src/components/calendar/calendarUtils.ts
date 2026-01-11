@@ -7,10 +7,10 @@ import type {
   CalendarDay,
 } from '../../lib/types';
 
-// Format time from HH:MM:SS to HH:MM
+// Converts a time string from HH:MM:SS format to HH:MM format
 export function formatTime(time: string | null | undefined): string {
   if (!time) return '';
-  // If time is in HH:MM:SS format, extract only HH:MM
+  // If the time is in HH:MM:SS format, extract only the HH:MM part
   if (time.includes(':')) {
     const parts = time.split(':');
     return `${parts[0]}:${parts[1]}`;
@@ -18,7 +18,7 @@ export function formatTime(time: string | null | undefined): string {
   return time;
 }
 
-// Get the next full hour from current time
+// Returns the next full hour as a string in HH:MM format
 export function getNextFullHour(): string {
   const now = new Date();
   const nextHour = new Date(now);
@@ -28,9 +28,10 @@ export function getNextFullHour(): string {
   return `${hours}:${minutes}`;
 }
 
-// Get the Monday of the current week
+// Returns the Date object for Monday of the current week
 export function getWeekStart(date: Date = new Date()): Date {
   const weekday = date.getDay();
+  // Calculate the difference to Monday (if Sunday, go back 6 days)
   const diffToMonday = weekday === 0 ? -6 : 1 - weekday;
   const start = new Date(date);
   start.setHours(0, 0, 0, 0);
@@ -237,7 +238,8 @@ export function createCalendarDays(
 
     // Add todos
     todos.forEach((todo) => {
-      if (todo.due_at && todo.due_at.startsWith(dateStr)) {
+      // Check if the due date matches the current day (compare only the date part)
+      if (todo.due_at?.split('T')[0] === dateStr) {
         dayEvents.push({
           type: 'todo',
           title: todo.task,
@@ -331,7 +333,7 @@ export function buildDayAgenda(
   });
 
   todos.forEach((todo) => {
-    if (todo.due_at && todo.due_at.startsWith(dateStr)) {
+      if (todo.due_at?.startsWith(dateStr)) {
       dayItems.push({
         type: 'todo',
         title: todo.task,
