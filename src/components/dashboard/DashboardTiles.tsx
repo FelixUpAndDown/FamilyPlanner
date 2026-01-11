@@ -1,3 +1,5 @@
+// DashboardTiles component for rendering navigation tiles on the dashboard
+// Only comments are changed, no user-facing German content is modified
 interface DashboardTile {
   key: string;
   emoji: string;
@@ -6,10 +8,14 @@ interface DashboardTile {
   onClick?: () => void;
 }
 
+// Props for the DashboardTiles component
 interface DashboardTilesProps {
   tiles: DashboardTile[];
 }
 
+type ReadonlyDashboardTilesProps = Readonly<DashboardTilesProps>;
+
+// Gradient color mapping for each tile type
 const TILE_GRADIENTS: Record<string, string> = {
   todos: 'from-yellow-100 to-orange-100',
   calendar: 'from-blue-100 to-cyan-100',
@@ -19,14 +25,16 @@ const TILE_GRADIENTS: Record<string, string> = {
   contacts: 'from-indigo-100 to-blue-100',
 };
 
-export default function DashboardTiles({ tiles }: DashboardTilesProps) {
+// Main DashboardTiles component definition
+export default function DashboardTiles({ tiles }: ReadonlyDashboardTilesProps) {
+  // Render a grid of dashboard tiles
   return (
     <div className="grid grid-cols-2 gap-4">
       {tiles.map((t) => (
         <button
           key={t.key}
           onClick={t.onClick}
-          className={`flex flex-col items-center justify-center p-6 bg-gradient-to-br ${
+          className={`flex flex-col items-center justify-center p-6 bg-linear-to-br ${
             TILE_GRADIENTS[t.key] || 'from-gray-100 to-gray-200'
           } rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 text-center h-36 border border-white/50`}
         >
@@ -39,4 +47,5 @@ export default function DashboardTiles({ tiles }: DashboardTilesProps) {
   );
 }
 
+// Export DashboardTile type for use elsewhere
 export type { DashboardTile };

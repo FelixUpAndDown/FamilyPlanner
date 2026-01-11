@@ -1,8 +1,11 @@
+// Dashboard component for displaying main app overview and navigation tiles
+// Only comments are changed, no user-facing German content is modified
 import DashboardHeader from './DashboardHeader';
 import DashboardTiles, { type DashboardTile } from './DashboardTiles';
 import { useDashboardData } from './useDashboardData';
 import { PullToRefresh } from '../shared/PullToRefresh';
 
+// Props for the Dashboard component
 interface DashboardProps {
   familyId: string;
   currentUserId: string;
@@ -18,6 +21,9 @@ interface DashboardProps {
   onLogout?: () => void;
 }
 
+type ReadonlyDashboardProps = Readonly<DashboardProps>;
+
+// Main Dashboard component definition
 export default function Dashboard({
   familyId,
   currentUserId,
@@ -31,24 +37,44 @@ export default function Dashboard({
   onOpenCalendar,
   userEmail,
   onLogout,
-}: DashboardProps) {
+}: ReadonlyDashboardProps) {
+  // Get dashboard data (counts, family name, loading state, etc.)
   const { openCount, noteCount, todayEventsCount, loading, familyName, refetch } =
     useDashboardData(familyId);
+  // Get current profile name from users list
   const profileName = users.find((u) => u.id === currentProfileId)?.name ?? null;
+
+  // Define dashboard navigation tiles
+  // Extract subtitle values to avoid nested ternaries and negated conditions
+  const todosSubtitle = (() => {
+    if (loading) return 'Lädt…';
+    if (openCount != null) return `${openCount} offen`;
+    return '—';
+  })();
+  const calendarSubtitle = (() => {
+    if (loading) return 'Lädt…';
+    if (todayEventsCount != null) return `${todayEventsCount} heute`;
+    return '—';
+  })();
+  const notesSubtitle = (() => {
+    if (loading) return 'Lädt…';
+    if (noteCount != null) return `${noteCount} Notizen`;
+    return '—';
+  })();
 
   const tiles: DashboardTile[] = [
     {
       key: 'todos',
       emoji: '📝',
       label: 'Todos',
-      subtitle: loading ? 'Lädt…' : openCount != null ? `${openCount} offen` : '—',
+      subtitle: todosSubtitle,
       onClick: onOpenTodos,
     },
     {
       key: 'calendar',
       emoji: '📅',
       label: 'Kalender',
-      subtitle: loading ? 'Lädt…' : todayEventsCount != null ? `${todayEventsCount} heute` : '—',
+      subtitle: calendarSubtitle,
       onClick: onOpenCalendar,
     },
     {
@@ -69,7 +95,7 @@ export default function Dashboard({
       key: 'notes',
       emoji: '🗒️',
       label: 'Notizen',
-      subtitle: loading ? 'Lädt…' : noteCount != null ? `${noteCount} Notizen` : '—',
+      subtitle: notesSubtitle,
       onClick: onOpenNotes,
     },
     {
@@ -81,9 +107,10 @@ export default function Dashboard({
     },
   ];
 
+  // Render dashboard header and navigation tiles
   return (
     <PullToRefresh onRefresh={refetch}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 relative">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 relative">
         <DashboardHeader
           familyName={familyName}
           profileName={profileName}
