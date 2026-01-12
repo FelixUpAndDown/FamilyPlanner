@@ -102,7 +102,10 @@ export default function RecipeItem({
             onClick={handleCancel}
             onKeyDown={handleDialogKeyDown}
           />
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-xl relative" style={{ zIndex: 1 }}>
+          <div
+            className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-xl relative"
+            style={{ zIndex: 1 }}
+          >
             <h3 className="text-lg font-semibold mb-3">Rezept als gekocht markieren?</h3>
             <p className="text-sm text-gray-600 mb-4">
               Möchtest du &quot;{recipe.name}&quot; wirklich als gekocht markieren?
