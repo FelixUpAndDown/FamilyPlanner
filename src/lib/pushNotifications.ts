@@ -8,19 +8,20 @@ export async function savePushSubscription(
   familyId: string,
   subscription: PushSubscription
 ) {
-
+  // Extrahiere nur endpoint und keys
+  const { endpoint, keys } = subscription as any;
   const { data, error } = await supabase.from('push_subscriptions').upsert(
     {
       user_id: userId,
       family_id: familyId,
-      subscription: JSON.stringify(subscription),
-      endpoint: subscription.endpoint,
+      endpoint,
+      p256dh: keys?.p256dh || '',
+      auth: keys?.auth || '',
     },
     {
       onConflict: 'endpoint',
     }
   );
-
   if (error) throw error;
   return data;
 }

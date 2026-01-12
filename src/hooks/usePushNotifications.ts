@@ -99,12 +99,15 @@ export function usePushNotifications(
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
       });
 
-      // Speichere Subscription in Supabase (direkt serialisieren, nicht .toJSON())
+
+      // Extrahiere nur endpoint und keys (p256dh, auth)
+      const { endpoint, keys } = subscription as any;
       const subscriptionData = {
         user_id: userId,
         family_id: familyId,
-        subscription: JSON.stringify(subscription),
-        endpoint: subscription.endpoint,
+        endpoint,
+        p256dh: keys?.p256dh || '',
+        auth: keys?.auth || '',
       };
 
       const { error: dbError } = await supabase
