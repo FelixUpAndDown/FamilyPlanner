@@ -41,7 +41,7 @@ export default function DayDetail({
         </button>
       </div>
       {items.length === 0 ? (
-        <p className="text-gray-500 text-sm">No appointments for this day</p>
+        <p className="text-gray-500 text-sm">Keine Termine für diesen Tag</p>
       ) : (
         <ul className="space-y-2">
           {items.map((item) => {
@@ -53,7 +53,7 @@ export default function DayDetail({
                 const birthYear = new Date(contact.birthdate).getFullYear();
                 const currentYear = item.date.getFullYear();
                 const age = currentYear - birthYear;
-                ageText = `will be ${age} years old`;
+                ageText = `wird ${age} Jahre alt`;
               }
             }
 

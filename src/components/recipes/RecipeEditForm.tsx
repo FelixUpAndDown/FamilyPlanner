@@ -4,13 +4,8 @@ import { useState, useEffect } from 'react';
 import { deleteRecipe } from '../../lib/recipes';
 import type { Recipe } from '../../lib/types';
 import RecipeFormShared from './RecipeFormShared';
-
-interface Ingredient {
-  name: string;
-  quantity: string;
-  unit: string;
-  add_to_shopping: boolean;
-}
+import type { Ingredient } from './RecipeFormShared';
+import { v4 as uuidv4 } from 'uuid';
 
 interface RecipeEditFormProps {
   // The recipe to edit
@@ -51,6 +46,7 @@ export default function RecipeEditForm({
     if (recipe.ingredients && recipe.ingredients.length > 0) {
       setIngredients(
         recipe.ingredients.map((ing) => ({
+          id: uuidv4(),
           name: ing.name,
           quantity: ing.quantity,
           unit: ing.unit,
@@ -58,7 +54,9 @@ export default function RecipeEditForm({
         }))
       );
     } else {
-      setIngredients([{ name: '', quantity: '1', unit: 'Stk', add_to_shopping: true }]);
+      setIngredients([
+        { id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
+      ]);
     }
   }, [recipe]);
 
@@ -66,7 +64,7 @@ export default function RecipeEditForm({
   const addIngredient = () => {
     setIngredients([
       ...ingredients,
-      { name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
+      { id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
     ]);
   };
   const removeIngredient = (index: number) => {
@@ -133,26 +131,23 @@ export default function RecipeEditForm({
             ←
           </button>
           <h3 className="text-lg font-bold flex-1">Rezept bearbeiten</h3>
-        import { v4 as uuidv4 } from 'uuid';
         </div>
         {/* Shared form content */}
         <RecipeFormShared
-                  id: uuidv4(),
-                  name: ing.name,
-                  quantity: ing.quantity,
-                  unit: ing.unit,
-                  add_to_shopping: ing.add_to_shopping,
+          name={name}
+          setName={setName}
+          instructions={instructions}
+          setInstructions={setInstructions}
           servings={servings}
           setServings={setServings}
           ingredients={ingredients}
           setIngredients={setIngredients}
           addIngredient={addIngredient}
           removeIngredient={removeIngredient}
-              { id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
+          updateIngredient={updateIngredient}
           moveIngredient={moveIngredient}
           submitting={submitting}
         />
-              setIngredients([{ id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true }]);
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg flex gap-2">
           <button
             type="button"

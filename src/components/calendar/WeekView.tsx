@@ -96,13 +96,13 @@ export default function WeekView({
                   </div>
                   {/* Show number of items or 'No entries' if empty */}
                   <div className="text-xs text-gray-500">
-                    {items.length === 0 ? 'No entries' : `${items.length} event(s)/task(s)`}
+                    {items.length === 0 ? 'Keine Einträge' : `${items.length} Termin(e)/Aufgabe(n)`}
                   </div>
                 </div>
                 {/* Highlight if today */}
                 {isToday && (
                   <span className="text-[11px] px-2 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">
-                    Today
+                    Heute
                   </span>
                 )}
               </div>
@@ -128,7 +128,7 @@ export default function WeekView({
                 ))}
                 {/* Show count of additional items if more than 4 */}
                 {items.length > 4 && (
-                  <span className="text-[11px] text-gray-600">+{items.length - 4} more</span>
+                  <span className="text-[11px] text-gray-600">+{items.length - 4} mehr</span>
                 )}
               </div>
             </button>
