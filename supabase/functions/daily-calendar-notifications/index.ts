@@ -107,15 +107,14 @@ serve(async (req) => {
 
       // Send notification to all subscriptions for this family
       for (const sub of familySubs) {
-        // Baue das Subscription-Objekt direkt aus endpoint, p256dh, auth
-        const subscription = {
-          endpoint: sub.endpoint,
-          keys: {
+        // Build subscription object for web-push
+        const subscription = { endpoint: sub.endpoint };
+        if (sub.p256dh && sub.auth) {
+          subscription.keys = {
             p256dh: sub.p256dh,
             auth: sub.auth,
-          },
-        };
-
+          };
+        }
         try {
           const pushPayload = {
             title: 'Heute',
@@ -123,7 +122,6 @@ serve(async (req) => {
             icon: '/icons/icon-192x192.png',
             data: { url: '/calendar' },
           };
-
           await webpush.sendNotification(subscription, JSON.stringify(pushPayload));
           results.push({ success: true, familyId });
         } catch (error) {
