@@ -93,16 +93,17 @@ export function usePushNotifications(
       await navigator.serviceWorker.ready;
 
       // Subscribe to push
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
       });
 
-      // Speichere Subscription in Supabase
+      // Speichere Subscription in Supabase (direkt serialisieren, nicht .toJSON())
       const subscriptionData = {
         user_id: userId,
         family_id: familyId,
-        subscription: JSON.stringify(subscription.toJSON()),
+        subscription: JSON.stringify(subscription),
         endpoint: subscription.endpoint,
       };
 

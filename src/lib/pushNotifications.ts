@@ -8,11 +8,12 @@ export async function savePushSubscription(
   familyId: string,
   subscription: PushSubscription
 ) {
+
   const { data, error } = await supabase.from('push_subscriptions').upsert(
     {
       user_id: userId,
       family_id: familyId,
-      subscription: JSON.stringify(subscription.toJSON()),
+      subscription: JSON.stringify(subscription),
       endpoint: subscription.endpoint,
     },
     {
