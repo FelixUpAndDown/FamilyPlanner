@@ -142,7 +142,6 @@ export default function RecipeDetail({
       }
 
       // Mark recipe for cooking after adding ingredients
-      // Mark recipe for cooking
       await markRecipeForCooking(recipe.id, familyId, currentProfileId || currentUserId);
 
       const message =
@@ -157,7 +156,7 @@ export default function RecipeDetail({
         // Close detail and update parent
       }
 
-      // Sofort schließen und aktualisieren
+      // close detail view and refresh data
       onClose();
       onUpdate();
     } catch (err: any) {
@@ -171,16 +170,20 @@ export default function RecipeDetail({
   const handleMarkAsCooked = async () => {
     try {
       await markRecipeAsCooked(recipe.id, familyId, currentProfileId || currentUserId);
-
+      // Show toast message if callback provided
       if (onAddToShopping) {
-        onAddToShopping(`"${recipe.name}" wurde als gekocht markiert!`);
+        onAddToShopping(`"${recipe.name}" als gekocht markiert ✓`);
       }
-
-      onClose();
-      onUpdate();
+      // Refresh data
+      if (onUpdate) {
+        onUpdate();
+      }
+      // close detail view
+      if (onClose) {
+        onClose();
+      }
     } catch (err: any) {
       alert(err.message || JSON.stringify(err));
-      // Check if all ingredients are selected
     }
   };
 

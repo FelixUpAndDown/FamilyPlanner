@@ -92,17 +92,17 @@ export default function RecipeItem({
       {/* Confirmation dialog for marking recipe as cooked */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          {/* Overlay button for closing dialog on click outside */}
+          {/* Overlay button for closing dialog on click outside (z-Index unter dem Panel!) */}
           <button
             type="button"
             tabIndex={0}
             aria-label="Dialog schließen"
             className="absolute inset-0 w-full h-full bg-transparent cursor-pointer"
-            style={{ zIndex: 1, left: 0, top: 0, right: 0, bottom: 0, position: 'fixed' }}
+            style={{ zIndex: 0, left: 0, top: 0, right: 0, bottom: 0, position: 'fixed' }}
             onClick={handleCancel}
             onKeyDown={handleDialogKeyDown}
           />
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-xl relative">
+          <div className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-xl relative" style={{ zIndex: 1 }}>
             <h3 className="text-lg font-semibold mb-3">Rezept als gekocht markieren?</h3>
             <p className="text-sm text-gray-600 mb-4">
               Möchtest du &quot;{recipe.name}&quot; wirklich als gekocht markieren?
