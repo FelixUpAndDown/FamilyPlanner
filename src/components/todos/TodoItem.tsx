@@ -104,13 +104,30 @@ export default function TodoItem({
             className="w-5 h-5 accent-blue-600 mt-0.5 shrink-0"
           />
           <div className="flex-1">
-            <p
-              className={`text-sm font-medium ${
-                todo.isDone ? 'line-through text-gray-400' : 'text-gray-700'
-              }`}
-            >
-              {todo.task || 'Keine Aufgabe'}
-            </p>
+            {(() => {
+              let prioClass = 'bg-gray-100 text-gray-900';
+              let prioTitle = 'Keine';
+              if (todo.priority === 'high') {
+                prioClass = 'bg-red-500 text-white';
+                prioTitle = 'Hoch';
+              } else if (todo.priority === 'medium') {
+                prioClass = 'bg-yellow-400 text-gray-900';
+                prioTitle = 'Mittel';
+              } else if (todo.priority === 'low') {
+                prioClass = 'bg-green-500 text-white';
+                prioTitle = 'Niedrig';
+              }
+              return (
+                <span
+                  className={`inline-block text-sm rounded px-2 py-1 mb-1 transition-colors duration-200 ${prioClass} ${
+                    todo.isDone ? 'opacity-60 line-through' : ''
+                  }`}
+                  title={prioTitle}
+                >
+                  {todo.task || 'Keine Aufgabe'}
+                </span>
+              );
+            })()}
           </div>
           <div className="flex gap-4 shrink-0">
             <button

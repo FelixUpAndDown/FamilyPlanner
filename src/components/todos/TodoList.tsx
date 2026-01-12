@@ -129,7 +129,7 @@ export default function TodoList({
           (minimalMode ? (
             // Minimal view for tasks
             <MinimalTodoView
-              todos={todos}
+              todos={getSortedTodos(todos, filter)}
               loading={loading}
               onToggle={handleToggle}
               onEdit={setEditTodo}
@@ -146,7 +146,7 @@ export default function TodoList({
               {error && <div className="mb-2 text-red-600">Fehler: {error}</div>}
               {/* List of tasks */}
               <ul className="flex flex-col gap-3">
-                {todos.map((todo) => (
+                {getSortedTodos(todos, filter).map((todo) => (
                   <TodoItem
                     key={todo.id}
                     todo={todo}
@@ -170,4 +170,21 @@ export default function TodoList({
       </div>
     </PullToRefresh>
   );
+}
+
+// Hilfsfunktion: Sortiert Todos nach Prio (hoch > mittel > niedrig > keine), dann nach Fälligkeitsdatum
+function getSortedTodos(todos: Todo[], filter: TodoFilterType): Todo[] {
+  // Prio-Mapping für Sortierung
+  const prioOrder: Record<string, number> = { high: 3, medium: 2, low: 1, '': 0 };
+  return [...todos].sort((a, b) => {
+    // Nur für offene Todos nach Prio sortieren, sonst nach Datum
+    if (filter === 'open') {
+      const prioDiff = prioOrder[b.priority ?? ''] - prioOrder[a.priority ?? ''];
+      if (prioDiff !== 0) return prioDiff;
+    }
+    // Nach Fälligkeitsdatum (aufsteigend, leere nach hinten)
+    const dateA = a.due_at ? new Date(a.due_at).getTime() : Infinity;
+    const dateB = b.due_at ? new Date(b.due_at).getTime() : Infinity;
+    return dateA - dateB;
+  });
 }

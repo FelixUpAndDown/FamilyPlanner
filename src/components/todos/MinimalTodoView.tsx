@@ -9,6 +9,20 @@ interface MinimalTodoViewProps {
 
 type ReadonlyMinimalTodoViewProps = Readonly<MinimalTodoViewProps>;
 
+type TodoPriority = '' | 'low' | 'medium' | 'high';
+const prioColor = (priority?: TodoPriority) => {
+  switch (priority) {
+    case 'high':
+      return 'bg-red-500 text-white';
+    case 'medium':
+      return 'bg-yellow-400 text-gray-900';
+    case 'low':
+      return 'bg-green-500 text-white';
+    default:
+      return 'bg-gray-200 text-gray-400';
+  }
+};
+
 export default function MinimalTodoView({
   todos,
   loading,
@@ -34,13 +48,30 @@ export default function MinimalTodoView({
               onChange={() => onToggle(todo)}
               className="w-5 h-5 cursor-pointer"
             />
-            <span
-              className={`flex-1 text-sm ${
-                todo.isDone ? 'text-gray-400 line-through' : 'text-gray-900'
-              }`}
-            >
-              {todo.task}
-            </span>
+            {(() => {
+              let prioClass = 'bg-gray-100 text-gray-900';
+              let prioTitle = 'Keine';
+              if (todo.priority === 'high') {
+                prioClass = 'bg-red-500 text-white';
+                prioTitle = 'Hoch';
+              } else if (todo.priority === 'medium') {
+                prioClass = 'bg-yellow-400 text-gray-900';
+                prioTitle = 'Mittel';
+              } else if (todo.priority === 'low') {
+                prioClass = 'bg-green-500 text-white';
+                prioTitle = 'Niedrig';
+              }
+              return (
+                <span
+                  className={`flex-1 text-sm rounded px-2 py-1 transition-colors duration-200 ${prioClass} ${
+                    todo.isDone ? 'opacity-60 line-through' : ''
+                  }`}
+                  title={prioTitle}
+                >
+                  {todo.task}
+                </span>
+              );
+            })()}
             <button
               onClick={() => onEdit(todo)}
               className="text-blue-600 hover:text-blue-800 px-2 py-1 text-sm font-medium"

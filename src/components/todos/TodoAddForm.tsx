@@ -7,6 +7,7 @@ import AssignedSelect from '../shared/AssignedSelect';
 // - users: list of users for assignment
 // - onAdd: function to add a new task entry
 // - onCancel: function to cancel adding
+type TodoPriority = '' | 'low' | 'medium' | 'high';
 interface TodoAddFormProps {
   currentProfileId: string;
   currentUserId: string;
@@ -15,7 +16,8 @@ interface TodoAddFormProps {
     task: string,
     assignedTo: string | null,
     description: string,
-    dueDate: string | null
+    dueDate: string | null,
+    priority?: TodoPriority
   ) => void;
   onCancel: () => void;
 }
@@ -38,6 +40,8 @@ export default function TodoAddForm({
   const [newDescription, setNewDescription] = useState('');
   // State for the new due date
   const [newDueDate, setNewDueDate] = useState('');
+  // State for priority
+  const [priority, setPriority] = useState<TodoPriority>('');
 
   // Update assigned user when profile or user changes
   useEffect(() => {
@@ -47,11 +51,12 @@ export default function TodoAddForm({
   // Handler for adding a new task entry
   const handleAdd = () => {
     if (!newTask) return;
-    onAdd(newTask, assignedTo, newDescription, newDueDate || null);
+    onAdd(newTask, assignedTo, newDescription, newDueDate || null, priority);
     setNewTask('');
     setNewDescription('');
     setAssignedTo(currentProfileId || currentUserId);
     setNewDueDate('');
+    setPriority('');
   };
 
   // Render the add form UI
@@ -95,6 +100,24 @@ export default function TodoAddForm({
             </button>
           )}
         </div>
+      </div>
+
+      {/* Priority select */}
+      <div>
+        <label htmlFor="priority" className="text-sm font-medium mb-1 block">
+          Priorität (optional)
+        </label>
+        <select
+          id="priority"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value as TodoPriority)}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Keine</option>
+          <option value="low">Niedrig</option>
+          <option value="medium">Mittel</option>
+          <option value="high">Hoch</option>
+        </select>
       </div>
 
       <AssignedSelect

@@ -19,6 +19,7 @@ export const getTodosForFamily = async (
       done_at,
       due_at,
       created_at,
+      priority,
       assigned:profiles!todos_assigned_to_id_fkey(user_id, name),
       creator:profiles!todos_created_by_id_fkey(user_id, name),
       done_by:profiles!todos_done_by_id_fkey(name)
@@ -30,7 +31,7 @@ export const getTodosForFamily = async (
   if (filter === 'open') query = query.eq('isDone', false);
   if (filter === 'done') query = query.eq('isDone', true);
 
-  // Sortierung abhängig vom Filter
+  // Sorting
   if (filter === 'all') query = query.order('created_at', { ascending: false });
   if (filter === 'done') query = query.order('done_at', { ascending: false });
   if (filter === 'open') query = query.order('due_at', { ascending: true });
@@ -56,7 +57,8 @@ export const addTodo = async (
   assignedToId: string | null,
   createdById: string,
   description?: string,
-  dueAt?: string | null
+  dueAt?: string | null,
+  priority?: '' | 'low' | 'medium' | 'high'
 ) => {
   const insertData: any = {
     family_id: familyId,
@@ -67,12 +69,22 @@ export const addTodo = async (
   if (assignedToId) insertData.assigned_to_id = assignedToId;
   if (description) insertData.description = description;
   if (dueAt) insertData.due_at = dueAt;
+  if (priority) insertData.priority = priority;
 
   const { data, error } = await supabase.from('todos').insert(insertData).select('*');
 
   if (error) throw error;
 
   return data;
+};
+
+// Update a task (edit form)
+export const updateTodo = async (
+  id: string,
+  fields: Partial<Pick<Todo, 'description' | 'due_at' | 'assigned_to_id' | 'priority'>>
+) => {
+  const { error } = await supabase.from('todos').update(fields).eq('id', id);
+  if (error) throw error;
 };
 
 // Toggle task completion status

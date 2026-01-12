@@ -24,6 +24,7 @@ export interface Todo {
   done_by_id?: string | null;
   done_at?: string | null;
   due_at?: string | null;
+  priority?: '' | 'low' | 'medium' | 'high'; // Prio: leer, niedrig, mittel, hoch
 
   // Optional: relational data for task
   assigned?: Profile | null;

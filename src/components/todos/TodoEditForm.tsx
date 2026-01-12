@@ -32,6 +32,8 @@ export default function TodoEditForm({
   const [dueAt, setDueAt] = useState(todo.due_at ? todo.due_at.split('T')[0] : '');
   const [assignedTo, setAssignedTo] = useState<string | null>(todo.assigned_to_id ?? null);
   const [description, setDescription] = useState(todo.description ?? '');
+  type TodoPriority = '' | 'low' | 'medium' | 'high';
+  const [priority, setPriority] = useState<TodoPriority>(todo.priority ?? '');
   const [comments, setComments] = useState<CommentWithUser[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loadingComments, setLoadingComments] = useState(false);
@@ -88,6 +90,7 @@ export default function TodoEditForm({
         due_at: dueAt ? new Date(dueAt).toISOString() : null,
         assigned_to_id: assignedTo,
         description,
+        priority,
       })
       .eq('id', todo.id);
 
@@ -190,6 +193,24 @@ export default function TodoEditForm({
             </button>
           )}
         </div>
+      </div>
+
+      {/* Priority select */}
+      <div>
+        <label htmlFor="priority" className="text-sm font-medium mb-1 block">
+          Priorität (optional)
+        </label>
+        <select
+          id="priority"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value as TodoPriority)}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Keine</option>
+          <option value="low">Niedrig</option>
+          <option value="medium">Mittel</option>
+          <option value="high">Hoch</option>
+        </select>
       </div>
 
       {/* Assigned to */}

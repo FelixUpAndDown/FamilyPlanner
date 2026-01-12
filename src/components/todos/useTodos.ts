@@ -80,11 +80,13 @@ export function useTodos(
   }, [familyId, filter]);
 
   // Handler for adding a new task
+  type TodoPriority = '' | 'low' | 'medium' | 'high';
   const handleAdd = async (
     task: string,
     assignedTo: string | null,
     description: string,
-    dueDate: string | null
+    dueDate: string | null,
+    priority?: TodoPriority
   ) => {
     try {
       // Add the new task to the database
@@ -94,7 +96,8 @@ export function useTodos(
         assignedTo,
         currentProfileId || currentUserId,
         description,
-        dueDate
+        dueDate,
+        priority
       );
       // Refresh the list after adding
       await fetchTodos();
