@@ -283,22 +283,13 @@ export default function ContactList({ familyId }: ReadonlyContactListProps) {
                     {filteredFamilies.length}{' '}
                     {filteredFamilies.length === 1 ? 'Familie' : 'Familien'}
                   </span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setShowFamilyForm(true)}
-                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium flex items-center gap-2"
-                    >
-                      <span>+</span>
-                      <span>Familie</span>
-                    </button>
-                    <button
-                      onClick={() => openPersonForm()}
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium flex items-center gap-2"
-                    >
-                      <span>+</span>
-                      <span>Person</span>
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setShowFamilyForm(true)}
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium flex items-center gap-2"
+                  >
+                    <span>+</span>
+                    <span>Familie</span>
+                  </button>
                 </div>
                 <div className="mb-4">
                   <input
@@ -402,7 +393,7 @@ export default function ContactList({ familyId }: ReadonlyContactListProps) {
             )}
 
             {/* Individual Contacts */}
-            {viewMode === 'persons' && allContacts.length > 0 && (
+            {viewMode === 'persons' && (
               <div>
                 <div className="mb-4 flex items-center justify-between">
                   <span className="text-gray-700 font-medium">
