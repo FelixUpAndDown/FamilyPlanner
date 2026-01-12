@@ -1,17 +1,17 @@
 /* eslint-disable no-restricted-globals */
 // Service Worker für Push-Benachrichtigungen
 
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
+globalThis.addEventListener('install', (event) => {
+  globalThis.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+globalThis.addEventListener('activate', (event) => {
+  event.waitUntil(globalThis.clients.claim());
 });
 
 // Push-Event Handler
 
-self.addEventListener('push', (event) => {
+globalThis.addEventListener('push', (event) => {
   let data = {
     title: 'Familie Planner',
     body: 'Du hast neue Termine',
@@ -23,6 +23,7 @@ self.addEventListener('push', (event) => {
       data = event.data.json();
     } catch (e) {
       data.body = event.data.text();
+      console.error('Error parsing push event data:', e);
     }
   }
 
@@ -41,24 +42,29 @@ self.addEventListener('push', (event) => {
     ],
   };
 
-  event.waitUntil(self.registration.showNotification(data.title, options));
+  event.waitUntil(globalThis.registration.showNotification(data.title, options));
 });
 
 // Notification Click Handler
-self.addEventListener('notificationclick', (event) => {
+globalThis.addEventListener('notificationclick', (event) => {
   event.notification.close();
   if (event.action === 'close') return;
   const urlToOpen = event.notification.data?.url || '/';
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url === new URL(urlToOpen, self.location.origin).href && 'focus' in client) {
-          return client.focus();
+    globalThis.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if (
+            client.url === new URL(urlToOpen, globalThis.location.origin).href &&
+            'focus' in client
+          ) {
+            return client.focus();
+          }
         }
-      }
-      if (self.clients.openWindow) {
-        return self.clients.openWindow(urlToOpen);
-      }
-    })
+        if (globalThis.clients.openWindow) {
+          return globalThis.clients.openWindow(urlToOpen);
+        }
+      })
   );
 });

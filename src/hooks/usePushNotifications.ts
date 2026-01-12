@@ -1,24 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
-interface UsePushNotificationsReturn {
-  isSupported: boolean;
-  isSubscribed: boolean;
-  permission: NotificationPermission;
-  subscribe: () => Promise<void>;
-  unsubscribe: () => Promise<void>;
-  loading: boolean;
-  error: string | null;
-}
-
-// WICHTIG: Diese Keys musst du generieren!
-// Führe aus: npx web-push generate-vapid-keys
-// Und setze sie als Environment Variables
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('-', '/');
+  const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('_', '/');
   const rawData = globalThis.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; ++i) {
@@ -27,10 +14,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return outputArray;
 }
 
-export function usePushNotifications(
-  userId?: string,
-  familyId?: string
-): UsePushNotificationsReturn {
+export function usePushNotifications(userId?: string, familyId?: string) {
   const [isSupported, setIsSupported] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
@@ -38,69 +22,50 @@ export function usePushNotifications(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Prüfe ob Push-Notifications unterstützt werden
     const supported = 'serviceWorker' in navigator && 'PushManager' in globalThis;
     setIsSupported(supported);
-
     if (supported && 'Notification' in globalThis) {
       setPermission(Notification.permission);
       checkSubscription();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkSubscription = async () => {
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      setIsSubscribed(!!subscription);
-    } catch (err) {
-      console.error('Error checking subscription:', err);
-    }
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    setIsSubscribed(!!subscription);
   };
 
   const subscribe = async () => {
     if (!isSupported) {
-      setError('Push-Benachrichtigungen werden nicht unterstützt');
+      setError('Push notifications are not supported');
       return;
     }
-
     if (!VAPID_PUBLIC_KEY) {
-      setError('VAPID Public Key fehlt - siehe .env.example');
+      setError('VAPID Public Key missing');
       return;
     }
-
     if (!userId || !familyId) {
-      setError('User ID oder Family ID fehlt');
+      setError('User ID or Family ID missing');
       return;
     }
-
     setLoading(true);
     setError(null);
-
     try {
-      // Request permission
       const result = await Notification.requestPermission();
       setPermission(result);
-
       if (result !== 'granted') {
-        setError('Benachrichtigungen wurden abgelehnt');
+        setError('Notifications denied');
         setLoading(false);
         return;
       }
-
-      // Registriere Service Worker falls noch nicht geschehen
       const registration = await navigator.serviceWorker.register('/service-worker.js');
       await navigator.serviceWorker.ready;
-
-      // Subscribe to push
-
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
       });
-
-
-      // Extrahiere nur endpoint und keys (p256dh, auth)
       const { endpoint, keys } = subscription as any;
       const subscriptionData = {
         user_id: userId,
@@ -109,20 +74,15 @@ export function usePushNotifications(
         p256dh: keys?.p256dh || '',
         auth: keys?.auth || '',
       };
-
       const { error: dbError } = await supabase
         .from('push_subscriptions')
         .upsert(subscriptionData, {
           onConflict: 'endpoint',
         });
-
       if (dbError) throw dbError;
-
       setIsSubscribed(true);
-      console.log('Push subscription successful');
     } catch (err: any) {
-      console.error('Error subscribing to push:', err);
-      setError(err.message || 'Fehler beim Aktivieren der Benachrichtigungen');
+      setError(typeof err === 'object' ? JSON.stringify(err) : String(err));
     } finally {
       setLoading(false);
     }
@@ -131,28 +91,20 @@ export function usePushNotifications(
   const unsubscribe = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
-
       if (subscription) {
         await subscription.unsubscribe();
-
-        // Lösche aus Supabase
         const { error: dbError } = await supabase
           .from('push_subscriptions')
           .delete()
           .eq('endpoint', subscription.endpoint);
-
         if (dbError) throw dbError;
       }
-
       setIsSubscribed(false);
-      console.log('Push unsubscription successful');
     } catch (err: any) {
-      console.error('Error unsubscribing from push:', err);
-      setError(err.message || 'Fehler beim Deaktivieren der Benachrichtigungen');
+      setError(err.message || 'Error disabling notifications');
     } finally {
       setLoading(false);
     }
