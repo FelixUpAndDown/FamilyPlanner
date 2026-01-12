@@ -211,18 +211,20 @@ export default function RecipeList({
           </div>
         )}
 
-        {/* Grid of recipe items */}
-        <div className="grid grid-cols-2 gap-4">
-          {filteredRecipes.map((recipe) => (
-            <RecipeItem
-              key={recipe.id}
-              recipe={recipe}
-              onClick={() => handleRecipeClick(recipe)}
-              isMarkedForCooking={markedRecipeIds.has(recipe.id)}
-              onMarkCooked={handleMarkCookedWithToast}
-            />
-          ))}
-        </div>
+        {/* Grid of recipe items nur anzeigen, wenn Rezepte vorhanden sind */}
+        {filteredRecipes.length > 0 && (
+          <div className="grid grid-cols-2 gap-4">
+            {filteredRecipes.map((recipe) => (
+              <RecipeItem
+                key={recipe.id}
+                recipe={recipe}
+                onClick={() => handleRecipeClick(recipe)}
+                isMarkedForCooking={markedRecipeIds.has(recipe.id)}
+                onMarkCooked={handleMarkCookedWithToast}
+              />
+            ))}
+          </div>
+        )}
       </>
     );
   }

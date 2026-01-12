@@ -133,24 +133,26 @@ export default function RecipeEditForm({
             ←
           </button>
           <h3 className="text-lg font-bold flex-1">Rezept bearbeiten</h3>
+        import { v4 as uuidv4 } from 'uuid';
         </div>
         {/* Shared form content */}
         <RecipeFormShared
-          name={name}
-          setName={setName}
-          instructions={instructions}
-          setInstructions={setInstructions}
+                  id: uuidv4(),
+                  name: ing.name,
+                  quantity: ing.quantity,
+                  unit: ing.unit,
+                  add_to_shopping: ing.add_to_shopping,
           servings={servings}
           setServings={setServings}
           ingredients={ingredients}
           setIngredients={setIngredients}
           addIngredient={addIngredient}
           removeIngredient={removeIngredient}
-          updateIngredient={updateIngredient}
+              { id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
           moveIngredient={moveIngredient}
           submitting={submitting}
         />
-        {/* Bottom bar with cancel, save, and delete buttons */}
+              setIngredients([{ id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true }]);
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg flex gap-2">
           <button
             type="button"

@@ -2,13 +2,8 @@
 // Only comments are changed, all user-facing German content is preserved
 import { useState } from 'react';
 import RecipeFormShared from './RecipeFormShared';
-
-interface Ingredient {
-  name: string;
-  quantity: string;
-  unit: string;
-  add_to_shopping: boolean;
-}
+import type { Ingredient } from './RecipeFormShared';
+import { v4 as uuidv4 } from 'uuid';
 
 interface RecipeAddFormProps {
   // Callback for adding a recipe
@@ -32,7 +27,7 @@ export default function RecipeAddForm({ onAdd, onCancel }: ReadonlyRecipeAddForm
   const [instructions, setInstructions] = useState('');
   const [servings, setServings] = useState<number | null>(null);
   const [ingredients, setIngredients] = useState<Ingredient[]>([
-    { name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
+    { id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
   ]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -40,7 +35,7 @@ export default function RecipeAddForm({ onAdd, onCancel }: ReadonlyRecipeAddForm
   const addIngredient = () => {
     setIngredients([
       ...ingredients,
-      { name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
+      { id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
     ]);
   };
   const removeIngredient = (index: number) => {
@@ -74,7 +69,9 @@ export default function RecipeAddForm({ onAdd, onCancel }: ReadonlyRecipeAddForm
       setName('');
       setInstructions('');
       setServings(null);
-      setIngredients([{ name: '', quantity: '1', unit: 'Stk', add_to_shopping: true }]);
+      setIngredients([
+        { id: uuidv4(), name: '', quantity: '1', unit: 'Stk', add_to_shopping: true },
+      ]);
     } catch (err) {
       console.error('Error adding recipe:', err);
     } finally {

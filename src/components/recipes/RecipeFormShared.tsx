@@ -4,6 +4,7 @@ import { QUANTITY_UNITS } from '../../lib/constants';
 
 // Ingredient type for recipe forms
 export interface Ingredient {
+  id: string;
   name: string;
   quantity: string;
   unit: string;
@@ -113,7 +114,7 @@ export default function RecipeFormShared({
           {ingredients.map((ing, index) => (
             // Ingredient row
             <div
-              key={ing.name + '-' + index}
+              key={ing.id}
               className="flex gap-1.5 items-start border p-2 rounded"
               id={index === 0 ? 'ingredient-list' : undefined}
             >

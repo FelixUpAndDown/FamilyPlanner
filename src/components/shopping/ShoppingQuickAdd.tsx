@@ -179,7 +179,7 @@ export default function ShoppingQuickAdd({
 
           {!loading && filteredItems.length === 0 && (
             <div className="text-center text-gray-500 py-8">
-              {searchQuery ? 'Keine Artikel gefunden' : 'Noch keine Artikel eingekauft'}
+              {searchQuery ? 'Keine Artikel gefunden' : 'Keine Artikel im Verlauf'}
             </div>
           )}
 

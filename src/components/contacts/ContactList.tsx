@@ -254,8 +254,24 @@ export default function ContactList({ familyId }: ReadonlyContactListProps) {
             {error && <div className="text-red-600">Fehler: {error}</div>}
 
             {!loading && contactFamilies.length === 0 && allContacts.length === 0 && (
-              <div className="text-center text-gray-500 py-12">
-                Noch keine Kontakte vorhanden. Füge eine Familie oder Einzelperson hinzu.
+              <div className="text-center text-gray-500 py-12 flex flex-col items-center gap-4">
+                <div>Noch keine Kontakte vorhanden. Füge eine Familie oder Einzelperson hinzu.</div>
+                <div className="flex gap-4 justify-center">
+                  <button
+                    onClick={() => setShowFamilyForm(true)}
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium flex items-center gap-2"
+                  >
+                    <span>+</span>
+                    <span>Familie</span>
+                  </button>
+                  <button
+                    onClick={() => openPersonForm()}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium flex items-center gap-2"
+                  >
+                    <span>+</span>
+                    <span>Person</span>
+                  </button>
+                </div>
               </div>
             )}
 
